@@ -1,0 +1,137 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: FAU-oEmbed\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-11-29 12:14+0100\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: RRZE-Webteam\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _n:1,2;_nx:1,2;__;_e;_ex\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../fau-oembed.php:49
+#, php-format
+msgid ""
+"Ihre PHP-Version %s ist veraltet. Bitte aktualisieren Sie mindestens auf die "
+"PHP-Version %s."
+msgstr ""
+"Your server is running PHP version %s. Please upgrade at least to PHP "
+"version %s."
+
+#: ../fau-oembed.php:53
+#, php-format
+msgid ""
+"Ihre Wordpress-Version %s ist veraltet. Bitte aktualisieren Sie mindestens "
+"auf die Wordpress-Version %s."
+msgstr ""
+"Your WordPress version is %s. Please upgrade at least to WordPress version "
+"%s."
+
+#: ../fau-oembed.php:121 ../fau-oembed.php:147
+msgid "oEmbed"
+msgstr "oEmbed"
+
+#: ../fau-oembed.php:128
+msgid ""
+"WordPress bindet Videos, Bilder und andere Inhalte einiger Provider "
+"automatisch in Ihre Blog-Seiten ein, sobald Sie den Link auf die "
+"entsprechende Datei angeben. Unterstützt werden hierbei z.B. Daten von "
+"YouTube, Twitter und Flickr."
+msgstr ""
+"WordPress automatically includes videos, images, and other content from some "
+"providers into your blog pages as soon as you specify the link to the "
+"appropriate file (for example YouTube, Twitter and Flickr)."
+
+#: ../fau-oembed.php:129 ../fau-oembed.php:188
+msgid "Standardwerte für eingebettete Objekte"
+msgstr "Default values for embedded objects"
+
+#: ../fau-oembed.php:130
+msgid ""
+"Hier können Sie einstellen, in welcher Größe die Inhalt automatisch "
+"eingebunden werden."
+msgstr ""
+"Here you can set the size in which the contents are automatically included."
+
+#: ../fau-oembed.php:131 ../fau-oembed.php:193
+msgid "Automatische Einbindung von FAU-Karten"
+msgstr "Automatic embedding of FAU-maps"
+
+#: ../fau-oembed.php:132
+msgid ""
+"Die Friedrich-Alexander-Universität Erlangen-Nürnberg bietet die "
+"Möglichkeit, Karten von Standorten universitärer Einrichtungen zu erstellen. "
+"Sofern Sie hier die automatische Einbindung von diesen FAU-Karten "
+"aktivieren, wird Ihnen statt eines Links die Karte in Ihrer Blog-Seite "
+"angezeigt."
+msgstr ""
+"The Friedrich-Alexander-University Erlangen-Nuremberg offers the ability to "
+"create maps of locations of university facilities. If you enable the "
+"automatic integration of these FAU-maps here, the map will be displayed in "
+"your blog page instead of a link."
+
+#: ../fau-oembed.php:133
+msgid "So erstellen Sie Ihre FAU-Karte:"
+msgstr "To create your FAU-map:"
+
+#: ../fau-oembed.php:135
+#, php-format
+msgid "Gehen Sie auf den %s."
+msgstr "Go to %s."
+
+#: ../fau-oembed.php:136
+msgid ""
+"Geben Sie den Standort der FAU an, den Sie in Ihrer Karte anzeigen möchten."
+msgstr "Specify the location of the FAU you want to display in your map."
+
+#: ../fau-oembed.php:137
+msgid "Klicken Sie auf Abschicken."
+msgstr "Click the \"Abschicken\"-Button."
+
+#: ../fau-oembed.php:138
+msgid ""
+"Kopieren Sie den angezeigten direkten Link zum iFrame und geben Sie diesen "
+"auf Ihrer Blog-Seite an."
+msgstr ""
+"Copy the displayed link to the iFrame and enter this on your blog page."
+
+#: ../fau-oembed.php:152
+msgid ""
+"<p><strong>Für mehr Information:</strong></p><p><a href=\"http://blogs.fau."
+"de/webworking\">RRZE-Webworking</a></p><p><a href=\"https://github.com/RRZE-"
+"Webteam\">RRZE-Webteam in Github</a></p>"
+msgstr ""
+"<p><strong>For more information:</strong></p><p><a href=\"http://blogs.fau."
+"de/webworking\">RRZE-Webworking</a></p><p><a href=\"https://github.com/RRZE-"
+"Webteam\">RRZE-Webteam on Github</a></p>"
+
+#: ../fau-oembed.php:171
+msgid "Einstellungen &rsaquo; oEmbed"
+msgstr "Settings &rsaquo; oEmbed"
+
+#: ../fau-oembed.php:190
+msgid "Breite"
+msgstr "Width"
+
+#: ../fau-oembed.php:191
+msgid "Höhe"
+msgstr "Height"
+
+#: ../fau-oembed.php:194
+msgid "Aktivieren"
+msgstr "Activate"
+
+#, fuzzy
+#~ msgid "FAU oEmbed"
+#~ msgstr "oEmbed"
+
+#~ msgid "Standardwerte"
+#~ msgstr "Default values"
