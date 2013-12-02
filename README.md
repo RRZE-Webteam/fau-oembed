@@ -1,4 +1,4 @@
 FAU-oEmbed
 ==========
 
-Plugin für oEmbed-Funktionen
+Automatische Einbindung der FAU-Karten und des FAU Videoportals
