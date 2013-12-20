@@ -439,8 +439,7 @@ class FAU_oEmbed {
         $height = $options['youtube_nocookie']['width']*36/64;
         $str = __('YouTube-Video', self::textdomain);
         $embed = sprintf(
-            '<div class="embed-youtube"><iframe src="https://www.youtube-nocookie.com/embed/%2$s%4$s" width="%3$spx" height="%5$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe><p><img src="%1$simages/youtube-icon.png" alt="">%6$s: <a href="https://www.youtube.com/watch?v=%2$s">https://www.youtube.com/watch?v=%2$s</a></p></div>',
-            plugin_dir_url(__FILE__),
+            '<div class="embed-youtube"><iframe src="https://www.youtube-nocookie.com/embed/%1$s%3$s" width="%2$spx" height="%4$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe><p>%5$s: <a href="https://www.youtube.com/watch?v=%1$s">https://www.youtube.com/watch?v=%1$s</a></p></div>',
             esc_attr($matches[1]),
             $options['youtube_nocookie']['width'],
             $relvideo,
