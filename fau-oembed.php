@@ -115,6 +115,7 @@ class FAU_oEmbed {
         add_action('init', array(__CLASS__, 'fau_videoportal'));      
         add_action('init', array(__CLASS__, 'youtube_nocookie'));
         
+        add_filter( 'pre_get_posts', array(__CLASS__, 'delete_oembed_caches' ) );
     }
     
     public static function add_options_page() {            
@@ -455,5 +456,28 @@ class FAU_oEmbed {
         return apply_filters( 'embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr );
     }   
 
+    public static function delete_oembed_caches( $query ) {
+        
+        if( !is_single() && !is_page() )
+            return;
+        
+        $post = get_post();
+        $post_ID = $post->ID;
+        $content = $post->post_content;
+        
+        if( !preg_match_all( '|^\s*(https?://[^\s"]+)\s*$|im', $content ) )
+                return;
+        
+        $post_metas = get_post_custom_keys( $post_ID );
+        if ( empty($post_metas) )
+            return;
+
+        foreach( $post_metas as $post_meta_key ) {
+            if ( '_oembed_' == substr( $post_meta_key, 0, 8 ) )
+                delete_post_meta( $post_ID, $post_meta_key );
+        }
+        
+    }
+    
     
 }
