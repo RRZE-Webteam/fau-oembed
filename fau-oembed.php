@@ -115,7 +115,7 @@ class FAU_oEmbed {
         add_action('init', array(__CLASS__, 'fau_videoportal'));      
         add_action('init', array(__CLASS__, 'youtube_nocookie'));
         
-        add_filter( 'pre_get_posts', array(__CLASS__, 'delete_oembed_caches' ) );
+        add_action('the_post', array(__CLASS__, 'delete_oembed_cache'));
     }
     
     public static function add_options_page() {            
@@ -406,7 +406,7 @@ class FAU_oEmbed {
     
     public static function fau_videoportal() {
         $options = self::get_options();
-        if ($options['fau_videoportal'] == true) {      
+        if ($options['fau_videoportal'] == true) {    
             wp_oembed_add_provider('http://www.video.uni-erlangen.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('http://www.video.fau.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('http://video.fau.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
@@ -456,17 +456,32 @@ class FAU_oEmbed {
         return apply_filters( 'embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr );
     }   
 
-    public static function delete_oembed_caches( $query ) {
-        
-        if( !is_single() && !is_page() )
-            return;
-        
-        $post = get_post();
+    public static function delete_oembed_cache( $post ) {
         $post_ID = $post->ID;
         $content = $post->post_content;
-        
-        if( !preg_match_all( '|^\s*(https?://[^\s"]+)\s*$|im', $content ) )
+                
+        if( !preg_match_all( '|^\s*(https?://[^\s"]+)\s*$|im', $content, $matches ) )
                 return;
+
+        $vp_alias = array(
+            'www.video.uni-erlangen.de',
+            'www.video.fau.de',
+            'video.fau.de',
+            'www.fau-tv.de',
+            'fau-tv.de',
+            'www.fau.tv',
+            'fau.tv'           
+        );
+        
+        foreach( $matches as $match ) {
+            foreach( $vp_alias as $alias ) {
+                if( !empty( $match[0] ) && strstr( $match[0], $alias ) )
+                    $delete = true;
+            }
+        }
+        
+        if( empty($delete ) )
+            return;
         
         $post_metas = get_post_custom_keys( $post_ID );
         if ( empty($post_metas) )
@@ -475,9 +490,8 @@ class FAU_oEmbed {
         foreach( $post_metas as $post_meta_key ) {
             if ( '_oembed_' == substr( $post_meta_key, 0, 8 ) )
                 delete_post_meta( $post_ID, $post_meta_key );
-        }
-        
+        }     
+
     }
-    
-    
+
 }
