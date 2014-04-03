@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-oEmbed
  * Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
- * Version: 1.2
+ * Version: 1.3
  * Author: RRZE-Webteam
  * Author URI: https://github.com/RRZE-Webteam/
  * License: GPLv2 or later
@@ -29,14 +29,14 @@ add_action('plugins_loaded', array('FAU_oEmbed', 'init'));
 
 class FAU_oEmbed {
 
-    const version = '1.2'; // Plugin-Version
+    const version = '1.3'; // Plugin-Version
     const option_name = '_fau_oembed';
     const textdomain = 'fau-oembed';
     const php_version = '5.3'; // Minimal erforderliche PHP-Version
     const wp_version = '3.8'; // Minimal erforderliche WordPress-Version
 
     private static $oembed_option_page = null;
-    private static $videoportal_object = array();
+    private static $videoportal = null;
 
     public static function activation_hook() {
         $error = '';
@@ -110,10 +110,8 @@ class FAU_oEmbed {
         add_action('init', array(__CLASS__, 'fau_videoportal'));
         add_action('init', array(__CLASS__, 'youtube_nocookie'));
 
-        add_action('the_post', array(__CLASS__, 'delete_oembed_cache'));
-
         add_filter('oembed_fetch_url', array(__CLASS__, 'oembed_url_filter'), 10, 3);
-        add_filter('embed_oembed_html', array(__CLASS__, 'oembed_html_filter'));
+        add_filter('embed_oembed_html', array(__CLASS__, 'oembed_html_filter'), 10, 4);
     }
 
     public static function add_options_page() {
@@ -440,54 +438,29 @@ class FAU_oEmbed {
     public static function oembed_url_filter($provider, $url, $args) {
         $host = parse_url($provider, PHP_URL_HOST);
         if ($host == 'www.video.uni-erlangen.de')
-            self::$videoportal_object = self::fetch($provider, $url, $args);
+            self::$videoportal = $provider;
 
         return $provider;
     }
 
-    public static function oembed_html_filter($html) {
-        if (!empty(self::$videoportal_object)) {
+    public static function oembed_html_filter($html, $url, $args, $post_id) {
+        if (self::$videoportal) {
+            self::delete_oembed_cache($post_id);
+            $video = self::fetch(self::$videoportal, $url, $args);
             $poster = 'http://cdn.video.uni-erlangen.de/Images/itunes_fau_800x400.png';
-            $html = sprintf('[video width="%1$s" height="%2$s" src="%3$s" poster="%4$s"][/video]', self::$videoportal_object->width, self::$videoportal_object->height, self::$videoportal_object->file, $poster);
+            $html = do_shortcode(sprintf('[video width="%1$s" height="%2$s" src="%3$s" poster="%4$s"][/video]', $video->width, $video->height, $video->file, $poster));
         }
-
         return $html;
     }
 
-    public static function delete_oembed_cache($post) {
-        $post_ID = $post->ID;
-        $content = $post->post_content;
-
-        if (!preg_match_all('|^\s*(https?://[^\s"]+)\s*$|im', $content, $matches))
-            return;
-
-        $vp_alias = array(
-            'www.video.uni-erlangen.de',
-            'www.video.fau.de',
-            'video.fau.de',
-            'www.fau-tv.de',
-            'fau-tv.de',
-            'www.fau.tv',
-            'fau.tv'
-        );
-
-        foreach ($matches as $match) {
-            foreach ($vp_alias as $alias) {
-                if (!empty($match[0]) && strstr($match[0], $alias))
-                    $delete = true;
-            }
-        }
-
-        if (empty($delete))
-            return;
-
-        $post_metas = get_post_custom_keys($post_ID);
+    private static function delete_oembed_cache($post_id) {
+        $post_metas = get_post_custom_keys($post_id);
         if (empty($post_metas))
             return;
 
         foreach ($post_metas as $post_meta_key) {
             if ('_oembed_' == substr($post_meta_key, 0, 8))
-                delete_post_meta($post_ID, $post_meta_key);
+                delete_post_meta($post_id, $post_meta_key);
         }
     }
 
