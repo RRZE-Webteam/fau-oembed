@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-oEmbed
  * Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
- * Version: 1.3
+ * Version: 2.0
  * Author: RRZE-Webteam
  * Author URI: https://github.com/RRZE-Webteam/
  * License: GPLv2 or later
@@ -23,22 +23,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-register_activation_hook(__FILE__, array('FAU_oEmbed', 'activation_hook'));
+add_action('plugins_loaded', array('FAU_oEmbed', 'instance'));
 
-add_action('plugins_loaded', array('FAU_oEmbed', 'init'));
+register_activation_hook(__FILE__, array('FAU_oEmbed', 'activation'));
 
 class FAU_oEmbed {
 
-    const version = '1.3'; // Plugin-Version
+    const version = '2.0'; // Plugin-Version
     const option_name = '_fau_oembed';
     const textdomain = 'fau-oembed';
     const php_version = '5.3'; // Minimal erforderliche PHP-Version
-    const wp_version = '3.8'; // Minimal erforderliche WordPress-Version
+    const wp_version = '3.9'; // Minimal erforderliche WordPress-Version
 
-    private static $oembed_option_page = null;
-    private static $videoportal = null;
+    protected static $instance = null;
 
-    public static function activation_hook() {
+    public static function instance() {
+
+        if (null == self::$instance) {
+            self::$instance = new self;
+            self::$instance->init();
+        }
+
+        return self::$instance;
+    }
+    
+    private $oembed_option_page = null;
+    private $videoportal = null;
+
+    public static function activation() {
+        self::version_compare();
+    }
+    
+    private static function version_compare() {
         $error = '';
 
         if (version_compare(PHP_VERSION, self::php_version, '<')) {
@@ -55,7 +71,7 @@ class FAU_oEmbed {
         }
     }
 
-    private static function default_options() {
+    private function default_options() {
         if (!empty($GLOBALS['content_width']))
             $width = (int) $GLOBALS['content_width'];
 
@@ -85,8 +101,8 @@ class FAU_oEmbed {
         return $options;
     }
 
-    private static function get_options() {
-        $defaults = self::default_options();
+    private function get_options() {
+        $defaults = $this->default_options();
 
         $options = (array) get_option(self::option_name);
 
@@ -97,29 +113,29 @@ class FAU_oEmbed {
         return $options;
     }
 
-    public static function init() {
+    private function init() {
         load_plugin_textdomain(self::textdomain, false, dirname(plugin_basename(__FILE__)) . '/languages');
 
-        add_action('admin_init', array(__CLASS__, 'admin_init'));
-        add_action('admin_menu', array(__CLASS__, 'add_options_page'));
-        add_action('wp_enqueue_scripts', array(__CLASS__, 'register_plugin_styles'));
+        add_action('admin_init', array($this, 'admin_init'));
+        add_action('admin_menu', array($this, 'add_options_page'));
+        add_action('wp_enqueue_scripts', array($this, 'register_plugin_styles'));
 
-        add_filter('embed_defaults', array(__CLASS__, 'embed_defaults'));
+        add_filter('embed_defaults', array($this, 'embed_defaults'));
 
-        add_action('init', array(__CLASS__, 'fau_karte'));
-        add_action('init', array(__CLASS__, 'fau_videoportal'));
-        add_action('init', array(__CLASS__, 'youtube_nocookie'));
+        add_action('init', array($this, 'fau_karte'));
+        add_action('init', array($this, 'fau_videoportal'));
+        add_action('init', array($this, 'youtube_nocookie'));
 
-        add_filter('oembed_fetch_url', array(__CLASS__, 'oembed_url_filter'), 10, 3);
-        add_filter('embed_oembed_html', array(__CLASS__, 'oembed_html_filter'), 10, 4);
+        add_filter('oembed_fetch_url', array($this, 'oembed_url_filter'), 10, 3);
+        add_filter('embed_oembed_html', array($this, 'oembed_html_filter'), 10, 4);
     }
 
-    public static function add_options_page() {
-        self::$oembed_option_page = add_options_page(__('oEmbed', self::textdomain), __('oEmbed', self::textdomain), 'manage_options', 'options-oembed', array(__CLASS__, 'options_oembed'));
-        add_action('load-' . self::$oembed_option_page, array(__CLASS__, 'oembed_help_menu'));
+    public function add_options_page() {
+        $this->oembed_option_page = add_options_page(__('oEmbed', self::textdomain), __('oEmbed', self::textdomain), 'manage_options', 'options-oembed', array($this, 'options_oembed'));
+        add_action('load-' . $this->oembed_option_page, array($this, 'oembed_help_menu'));
     }
 
-    public static function oembed_help_menu() {
+    public function oembed_help_menu() {
 
         $content_overview = array(
             '<p>' . __('WordPress bindet Videos, Bilder und andere Inhalte einiger Provider automatisch in Ihre Blog-Seiten ein, sobald Sie den Link auf die entsprechende Datei angeben. Unterstützt werden hierbei z.B. Daten von YouTube, Twitter und Flickr.', self::textdomain) . '</p>',
@@ -191,7 +207,7 @@ class FAU_oEmbed {
 
         $screen = get_current_screen();
 
-        if ($screen->id != self::$oembed_option_page) {
+        if ($screen->id != $this->oembed_option_page) {
             return;
         }
 
@@ -203,7 +219,7 @@ class FAU_oEmbed {
         $screen->set_help_sidebar($help_sidebar);
     }
 
-    public static function options_oembed() {
+    public function options_oembed() {
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
@@ -220,50 +236,53 @@ class FAU_oEmbed {
         <?php
     }
 
-    public static function admin_init() {
+    public function admin_init() {
 
-        register_setting('oembed_options', self::option_name, array(__CLASS__, 'options_validate'));
+        register_setting('oembed_options', self::option_name, array($this, 'options_validate'));
 
         add_settings_section('embed_default_section', __('Standardwerte für eingebettete Objekte', self::textdomain), '__return_false', 'oembed_options');
 
-        add_settings_field('embed_defaults_width', __('Breite', self::textdomain), array(__CLASS__, 'embed_defaults_width'), 'oembed_options', 'embed_default_section');
-        add_settings_field('embed_defaults_height', __('Höhe', self::textdomain), array(__CLASS__, 'embed_defaults_height'), 'oembed_options', 'embed_default_section');
+        add_settings_field('embed_defaults_width', __('Breite', self::textdomain), array($this, 'embed_defaults_width'), 'oembed_options', 'embed_default_section');
+        add_settings_field('embed_defaults_height', __('Höhe', self::textdomain), array($this, 'embed_defaults_height'), 'oembed_options', 'embed_default_section');
 
         add_settings_section('faukarte_section', __('Automatische Einbindung von FAU-Karten', self::textdomain), '__return_false', 'oembed_options');
-        add_settings_field('faukarte_active', __('Aktivieren', self::textdomain), array(__CLASS__, 'faukarte_active'), 'oembed_options', 'faukarte_section');
-        //add_settings_field('faukarte_width', __( 'Breite', self::textdomain ), array(__CLASS__, 'faukarte_width'), 'oembed_options', 'faukarte_section');
-        //add_settings_field('faukarte_height', __( 'Höhe', self::textdomain ), array(__CLASS__, 'faukarte_height'), 'oembed_options', 'faukarte_section');
+        add_settings_field('faukarte_active', __('Aktivieren', self::textdomain), array($this, 'faukarte_active'), 'oembed_options', 'faukarte_section');
+        //add_settings_field('faukarte_width', __( 'Breite', self::textdomain ), array($this, 'faukarte_width'), 'oembed_options', 'faukarte_section');
+        //add_settings_field('faukarte_height', __( 'Höhe', self::textdomain ), array($this, 'faukarte_height'), 'oembed_options', 'faukarte_section');
 
         add_settings_section('videoportal_section', __('Automatische Einbindung des FAU Videoportals', self::textdomain), '__return_false', 'oembed_options');
-        add_settings_field('videoportal_active', __('Aktivieren', self::textdomain), array(__CLASS__, 'videoportal_active'), 'oembed_options', 'videoportal_section');
+        add_settings_field('videoportal_active', __('Aktivieren', self::textdomain), array($this, 'videoportal_active'), 'oembed_options', 'videoportal_section');
 
 
         add_settings_section('youtube_nocookie_section', __('Automatische Einbindung von YouTube-Videos ohne Cookies', self::textdomain), '__return_false', 'oembed_options');
-        add_settings_field('youtube_nocookie_active', __('Aktivieren', self::textdomain), array(__CLASS__, 'youtube_nocookie_active'), 'oembed_options', 'youtube_nocookie_section');
-        add_settings_field('youtube_nocookie_width', __('Breite', self::textdomain), array(__CLASS__, 'youtube_nocookie_width'), 'oembed_options', 'youtube_nocookie_section');
-        add_settings_field('youtube_nocookie_norel', __('Anzeige ähnlicher Videos ausblenden', self::textdomain), array(__CLASS__, 'youtube_nocookie_norel'), 'oembed_options', 'youtube_nocookie_section');
+        add_settings_field('youtube_nocookie_active', __('Aktivieren', self::textdomain), array($this, 'youtube_nocookie_active'), 'oembed_options', 'youtube_nocookie_section');
+        add_settings_field('youtube_nocookie_width', __('Breite', self::textdomain), array($this, 'youtube_nocookie_width'), 'oembed_options', 'youtube_nocookie_section');
+        add_settings_field('youtube_nocookie_norel', __('Anzeige ähnlicher Videos ausblenden', self::textdomain), array($this, 'youtube_nocookie_norel'), 'oembed_options', 'youtube_nocookie_section');
     }
 
-    public static function register_plugin_styles() {
+    public function register_plugin_styles() {
         wp_register_style('fau-oembed', sprintf('%scss/fau-oembed.css', plugin_dir_url(__FILE__)), array('dashicons'));
+
+        wp_enqueue_style('wp-mediaelement');
+        wp_enqueue_script('wp-mediaelement');
     }
 
-    public static function embed_defaults_width() {
-        $options = self::get_options();
+    public function embed_defaults_width() {
+        $options = $this->get_options();
         ?>
         <input type='text' name="<?php printf('%s[embed_defaults][width]', self::option_name); ?>" value="<?php echo $options['embed_defaults']['width']; ?>">
         <?php
     }
 
-    public static function embed_defaults_height() {
-        $options = self::get_options();
+    public function embed_defaults_height() {
+        $options = $this->get_options();
         ?>
         <input type='text' name="<?php printf('%s[embed_defaults][height]', self::option_name); ?>" value="<?php echo $options['embed_defaults']['height']; ?>">
         <?php
     }
 
-    public static function faukarte_active() {
-        $options = self::get_options();
+    public function faukarte_active() {
+        $options = $this->get_options();
         ?>
         <input type='checkbox' name="<?php printf('%s[faukarte][active]', self::option_name); ?>" <?php checked($options['faukarte']['active'], true); ?>>                   
         <?php
@@ -271,57 +290,56 @@ class FAU_oEmbed {
 
     /* Modifizieren der Anzeige nur für FAU-Karten funktioniert nicht    
      * 
-      public static function faukarte_width() {
-      $options = self::get_options();
+    public function faukarte_width() {
+        $options = $this->get_options();
+        ?>
+        <input type='text' name="<?php printf('%s[faukarte][width]', self::option_name); ?>" value="<?php echo $options['faukarte']['width']; ?>">
+        <?php
+    }
 
-      ?>
-      <input type='text' name="<?php printf('%s[faukarte][width]', self::option_name); ?>" value="<?php echo $options['faukarte']['width']; ?>">
-      <?php
-      }
-
-      public static function faukarte_height() {
-      $options = self::get_options();
-      ?>
-      <input type='text' name="<?php printf('%s[faukarte][height]', self::option_name); ?>" value="<?php echo $options['faukarte']['height']; ?>">
-      <?php
-      }
-
+    public function faukarte_height() {
+        $options = $this->get_options();
+        ?>
+        <input type='text' name="<?php printf('%s[faukarte][height]', self::option_name); ?>" value="<?php echo $options['faukarte']['height']; ?>">
+        <?php
+    }
+     * 
      */
 
-    public static function videoportal_active() {
-        $options = self::get_options();
+    public function videoportal_active() {
+        $options = $this->get_options();
         ?>
         <input type='checkbox' name="<?php printf('%s[fau_videoportal]', self::option_name); ?>" <?php checked($options['fau_videoportal'], true); ?>>
 
         <?php
     }
 
-    public static function youtube_nocookie_active() {
-        $options = self::get_options();
+    public function youtube_nocookie_active() {
+        $options = $this->get_options();
         ?>
         <input type='checkbox' name="<?php printf('%s[youtube_nocookie][active]', self::option_name); ?>" <?php checked($options['youtube_nocookie']['active'], true); ?>>
 
         <?php
     }
 
-    public static function youtube_nocookie_width() {
-        $options = self::get_options();
+    public function youtube_nocookie_width() {
+        $options = $this->get_options();
         ?>
         <input type='text' name="<?php printf('%s[youtube_nocookie][width]', self::option_name); ?>" value="<?php echo $options['youtube_nocookie']['width']; ?>"><p class="description"><?php _e('Zu empfehlen ist eine Breite von mindestens 350px.', self::textdomain); ?></p>
         <?php
     }
 
-    public static function youtube_nocookie_norel() {
-        $options = self::get_options();
+    public function youtube_nocookie_norel() {
+        $options = $this->get_options();
         ?>
         <input type='checkbox' name="<?php printf('%s[youtube_nocookie][norel]', self::option_name); ?>" <?php checked($options['youtube_nocookie']['norel'], true); ?>><p class="description"><?php _e('Funktioniert nur, wenn die automatische Einbindung von YouTube-Videos aktiviert ist.', self::textdomain); ?></p>
 
         <?php
     }
 
-    public static function options_validate($input) {
-        $defaults = self::default_options();
-        $options = self::get_options();
+    public function options_validate($input) {
+        $defaults = $this->default_options();
+        $options = $this->get_options();
 
         $input['embed_defaults']['width'] = (int) $input['embed_defaults']['width'];
         $input['embed_defaults']['height'] = (int) $input['embed_defaults']['height'];
@@ -331,14 +349,13 @@ class FAU_oEmbed {
         $input['faukarte']['active'] = isset($input['faukarte']['active']) ? true : false;
         $input['fau_videoportal'] = isset($input['fau_videoportal']) ? true : false;
 
-
-
-        /* Modifizieren der Anzeige nur für FAU-Karten funktioniert noch nicht
+        /*
+         * Modifizieren der Anzeige nur für FAU-Karten funktioniert noch nicht
          * 
-          $input['faukarte']['width'] = (int) $input['faukarte']['width'];
-          $input['faukarte']['height'] = (int) $input['faukarte']['height'];
-          $input['faukarte']['width'] = !empty($input['faukarte']['width']) ? $input['faukarte']['width'] : $defaults['faukarte']['width'];
-          $input['faukarte']['height'] = !empty($input['faukarte']['height']) ? $input['faukarte']['height'] : $defaults['faukarte']['height'];
+        $input['faukarte']['width'] = (int) $input['faukarte']['width'];
+        $input['faukarte']['height'] = (int) $input['faukarte']['height'];
+        $input['faukarte']['width'] = !empty($input['faukarte']['width']) ? $input['faukarte']['width'] : $defaults['faukarte']['width'];
+        $input['faukarte']['height'] = !empty($input['faukarte']['height']) ? $input['faukarte']['height'] : $defaults['faukarte']['height'];
          */
 
         $input['youtube_nocookie']['active'] = isset($input['youtube_nocookie']['active']) ? true : false;
@@ -348,8 +365,8 @@ class FAU_oEmbed {
         return $input;
     }
 
-    public static function embed_defaults($defaults) {
-        $options = self::get_options();
+    public function embed_defaults($defaults) {
+        $options = $this->get_options();
 
         $defaults['width'] = $options['embed_defaults']['width'];
         $defaults['height'] = $options['embed_defaults']['height'];
@@ -357,8 +374,8 @@ class FAU_oEmbed {
         return $defaults;
     }
 
-    public static function fau_karte() {
-        $options = self::get_options();
+    public function fau_karte() {
+        $options = $this->get_options();
         if ($options['faukarte']['active'] == true) {
             wp_oembed_add_provider('http://karte.fau.de/api/v1/iframe/*', 'http://karte.fau.de/api/v1/oembed?url=');
         }
@@ -367,32 +384,27 @@ class FAU_oEmbed {
     /*
      * Versuch, die FAU-Karte nicht über add_provider sondern über register_handler einzubinden um die Größenangabe nur für die FAU-Karte zu beeinflussen
      * 
-      public static function fau_karte() {
-      $options = self::get_options();
-      if ($options['faukarte']['active'] == true) {
-      //wp_embed_register_handler('faukarte', '#http://karte\.fau\.de/api/v1/iframe/([a-z0-9 //\-_]+)#i', 'wp_embed_handler_faukarte');
-      wp_embed_register_handler('faukarte', '#http://karte\.fau\.de/api/v1/iframe/address/findelgasse#i', 'wp_embed_handler_faukarte');
-      }
-      }
+    public function fau_karte() {
+        $options = $this->get_options();
+        if ($options['faukarte']['active'] == true) {
+            //wp_embed_register_handler('faukarte', '#http://karte\.fau\.de/api/v1/iframe/([a-z0-9 //\-_]+)#i', 'wp_embed_handler_faukarte');
+            wp_embed_register_handler('faukarte', '#http://karte\.fau\.de/api/v1/iframe/address/findelgasse#i', 'wp_embed_handler_faukarte');
+        }
+    }
 
-      public static function wp_embed_handler_faukarte( $matches, $attr, $url, $rawattr ) {
-      $options = self::get_options();
-      $embed = sprintf(
-      '<div class="embed-faukarte"><iframe src="http://karte.fau.de/api/v1/iframe/%1$s" width="%2$spx" height="%3$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>',
-      esc_attr($matches[1]),
-      $options['faukarte']['width'],
-      $options['faukarte']['height']
+    public function wp_embed_handler_faukarte($matches, $attr, $url, $rawattr) {
+        $options = $this->get_options();
+        $embed = sprintf(
+                '<div class="embed-faukarte"><iframe src="http://karte.fau.de/api/v1/iframe/%1$s" width="%2$spx" height="%3$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>', esc_attr($matches[1]), $options['faukarte']['width'], $options['faukarte']['height']
+        );
 
-      );
-
-      return apply_filters( 'embed_faukarte', $embed, $matches, $attr, $url, $rawattr );
-      }
-
+        return apply_filters('embed_faukarte', $embed, $matches, $attr, $url, $rawattr);
+    }
      * 
      */
 
-    public static function fau_videoportal() {
-        $options = self::get_options();
+    public function fau_videoportal() {
+        $options = $this->get_options();
         if ($options['fau_videoportal'] == true) {
             wp_oembed_add_provider('http://www.video.uni-erlangen.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('http://www.video.fau.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
@@ -405,21 +417,21 @@ class FAU_oEmbed {
         }
     }
 
-    public static function youtube_nocookie() {
-        $options = self::get_options();
+    public function youtube_nocookie() {
+        $options = $this->get_options();
         if ($options['youtube_nocookie']['active'] == true) {
             wp_oembed_remove_provider('#https?://(www\.)?youtube\.com/watch.*#i');
             wp_oembed_remove_provider('http://youtu.be/*');
 
-            wp_embed_register_handler('ytnocookie', '#https?://www\.youtube\-nocookie\.com/embed/([a-z0-9\-_]+)#i', array(__CLASS__, 'wp_embed_handler_ytnocookie'));
-            wp_embed_register_handler('ytnormal', '#https?://www\.youtube\.com/watch\?v=([a-z0-9\-_]+)#i', array(__CLASS__, 'wp_embed_handler_ytnocookie'));
-            wp_embed_register_handler('ytnormal2', '#https?://www\.youtube\.com/watch\?feature=player_embedded&v=([a-z0-9\-_]+)#i', array(__CLASS__, 'wp_embed_handler_ytnocookie'));
-            wp_embed_register_handler('yttube', '#http://youtu\.be/([a-z0-9\-_]+)#i', array(__CLASS__, 'wp_embed_handler_ytnocookie'));
+            wp_embed_register_handler('ytnocookie', '#https?://www\.youtube\-nocookie\.com/embed/([a-z0-9\-_]+)#i', array($this, 'wp_embed_handler_ytnocookie'));
+            wp_embed_register_handler('ytnormal', '#https?://www\.youtube\.com/watch\?v=([a-z0-9\-_]+)#i', array($this, 'wp_embed_handler_ytnocookie'));
+            wp_embed_register_handler('ytnormal2', '#https?://www\.youtube\.com/watch\?feature=player_embedded&v=([a-z0-9\-_]+)#i', array($this, 'wp_embed_handler_ytnocookie'));
+            wp_embed_register_handler('yttube', '#http://youtu\.be/([a-z0-9\-_]+)#i', array($this, 'wp_embed_handler_ytnocookie'));
         }
     }
 
-    public static function wp_embed_handler_ytnocookie($matches, $attr, $url, $rawattr) {
-        $options = self::get_options();
+    public function wp_embed_handler_ytnocookie($matches, $attr, $url, $rawattr) {
+        $options = $this->get_options();
 
         wp_enqueue_style('fau-oembed');
 
@@ -427,61 +439,75 @@ class FAU_oEmbed {
         if ($options['youtube_nocookie']['norel'] == 1) {
             $relvideo = '?rel=0';
         }
+        
         $height = $options['youtube_nocookie']['width'] * 36 / 64;
         $str = __('YouTube-Video', self::textdomain);
         $embed = sprintf(
                 '<div class="embed-youtube"><iframe src="https://www.youtube-nocookie.com/embed/%1$s%3$s" width="%2$spx" height="%4$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe><p>%5$s: <a href="https://www.youtube.com/watch?v=%1$s">https://www.youtube.com/watch?v=%1$s</a></p></div>', esc_attr($matches[1]), $options['youtube_nocookie']['width'], $relvideo, $height, $str
         );
+        
         return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
     }
 
-    public static function oembed_url_filter($provider, $url, $args) {
+    public function oembed_url_filter($provider, $url, $args) {
         $host = parse_url($provider, PHP_URL_HOST);
         if ($host == 'www.video.uni-erlangen.de')
-            self::$videoportal = $provider;
+            $this->videoportal = $provider;
 
         return $provider;
     }
 
-    public static function oembed_html_filter($html, $url, $args, $post_id) {
-        if (self::$videoportal) {
-            self::delete_oembed_cache($post_id);
-            $video = self::fetch(self::$videoportal, $url, $args);
-            $poster = 'http://cdn.video.uni-erlangen.de/Images/itunes_fau_800x400.png';
-            $html = do_shortcode(sprintf('[video width="%1$s" height="%2$s" src="%3$s" poster="%4$s"][/video]', $video->width, $video->height, $video->file, $poster));
+    public function oembed_html_filter($html, $url, $args, $post_id) {
+        if ($this->videoportal) {
+            unset($args['discover']);
+            $cachekey = '_oembed_' . md5($url . serialize($args));
+            $cache = get_post_meta($post_id, $cachekey, true);
+
+            $video = $this->fetch($this->videoportal, $url, $args);
+
+            $poster = plugins_url('/', __FILE__) . 'images/video-fau-800x400.png';
+            $html = do_shortcode(sprintf('[video width="%1$s" height="%2$s" src="%3$s%4$s" poster="%5$s"][/video]', $video->width, $video->height, $video->provider_url, $video->file, $poster));
+
+            $cache = ( $html ) ? $html : '{{unknown}}';
+            if (!empty($cache)) {
+                update_post_meta($post_id, $cachekey, $cache);
+            }
         }
         return $html;
     }
 
-    private static function delete_oembed_cache($post_id) {
+    /**
+     * 
+    private function delete_oembed_cache($post_id) {
         $post_metas = get_post_custom_keys($post_id);
-        if (empty($post_metas))
+        if (empty($post_metas)) {
             return;
-
+        }
         foreach ($post_metas as $post_meta_key) {
-            if ('_oembed_' == substr($post_meta_key, 0, 8))
+            if ('_oembed_' == substr($post_meta_key, 0, 8)) {
                 delete_post_meta($post_id, $post_meta_key);
+            }
         }
     }
-
-    private static function fetch($provider, $url, $args = '') {
+     * 
+     */
+    private function fetch($provider, $url, $args = '') {
         $args = wp_parse_args($args, wp_embed_defaults());
 
         $provider = add_query_arg('maxwidth', (int) $args['width'], $provider);
         $provider = add_query_arg('maxheight', (int) $args['height'], $provider);
         $provider = add_query_arg('url', urlencode($url), $provider);
 
-        $result = self::fetch_with_format($provider);
+        $result = $this->fetch_with_format($provider);
 
-        if (is_wp_error($result) && 'not-implemented' == $result->get_error_code())
+        if (is_wp_error($result) && 'not-implemented' == $result->get_error_code()) {
             return false;
-
+        }
+        
         return ( $result && !is_wp_error($result) ) ? $result : false;
-
-        return false;
     }
 
-    private static function fetch_with_format($provider_url_with_args) {
+    private function fetch_with_format($provider_url_with_args) {
         $provider_url_with_args = add_query_arg('format', 'json', $provider_url_with_args);
         $response = wp_safe_remote_get($provider_url_with_args);
 
@@ -491,10 +517,10 @@ class FAU_oEmbed {
         if (!$body = wp_remote_retrieve_body($response))
             return false;
 
-        return self::parse_json($body);
+        return $this->parse_json($body);
     }
 
-    private static function parse_json($response_body) {
+    private function parse_json($response_body) {
         return ( ( $data = json_decode(trim($response_body)) ) && is_object($data) ) ? $data : false;
     }
 
