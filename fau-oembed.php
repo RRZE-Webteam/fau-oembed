@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-oEmbed
  * Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
- * Version: 2.0
+ * Version: 2.1
  * Author: RRZE-Webteam
  * Author URI: https://github.com/RRZE-Webteam/
  * License: GPLv2 or later
@@ -29,7 +29,7 @@ register_activation_hook(__FILE__, array('FAU_oEmbed', 'activation'));
 
 class FAU_oEmbed {
 
-    const version = '2.0'; // Plugin-Version
+    const version = '2.1'; // Plugin-Version
     const option_name = '_fau_oembed';
     const textdomain = 'fau-oembed';
     const php_version = '5.3'; // Minimal erforderliche PHP-Version
@@ -48,7 +48,7 @@ class FAU_oEmbed {
     }
     
     private $oembed_option_page = null;
-    private $videoportal = null;
+    private $videoportal = array();
 
     public static function activation() {
         self::version_compare();
@@ -118,7 +118,6 @@ class FAU_oEmbed {
 
         add_action('admin_init', array($this, 'admin_init'));
         add_action('admin_menu', array($this, 'add_options_page'));
-        add_action('wp_enqueue_scripts', array($this, 'register_plugin_styles'));
 
         add_filter('embed_defaults', array($this, 'embed_defaults'));
 
@@ -258,13 +257,6 @@ class FAU_oEmbed {
         add_settings_field('youtube_nocookie_active', __('Aktivieren', self::textdomain), array($this, 'youtube_nocookie_active'), 'oembed_options', 'youtube_nocookie_section');
         add_settings_field('youtube_nocookie_width', __('Breite', self::textdomain), array($this, 'youtube_nocookie_width'), 'oembed_options', 'youtube_nocookie_section');
         add_settings_field('youtube_nocookie_norel', __('Anzeige ähnlicher Videos ausblenden', self::textdomain), array($this, 'youtube_nocookie_norel'), 'oembed_options', 'youtube_nocookie_section');
-    }
-
-    public function register_plugin_styles() {
-        wp_register_style('fau-oembed', sprintf('%scss/fau-oembed.css', plugin_dir_url(__FILE__)), array('dashicons'));
-
-        wp_enqueue_style('wp-mediaelement');
-        wp_enqueue_script('wp-mediaelement');
     }
 
     public function embed_defaults_width() {
@@ -433,64 +425,42 @@ class FAU_oEmbed {
     public function wp_embed_handler_ytnocookie($matches, $attr, $url, $rawattr) {
         $options = $this->get_options();
 
-        wp_enqueue_style('fau-oembed');
-
         $relvideo = '';
         if ($options['youtube_nocookie']['norel'] == 1) {
             $relvideo = '?rel=0';
         }
         
         $height = $options['youtube_nocookie']['width'] * 36 / 64;
-        $str = __('YouTube-Video', self::textdomain);
-        $embed = sprintf(
-                '<div class="embed-youtube"><iframe src="https://www.youtube-nocookie.com/embed/%1$s%3$s" width="%2$spx" height="%4$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe><p>%5$s: <a href="https://www.youtube.com/watch?v=%1$s">https://www.youtube.com/watch?v=%1$s</a></p></div>', esc_attr($matches[1]), $options['youtube_nocookie']['width'], $relvideo, $height, $str
-        );
+        
+        $embed = sprintf('<div class="oembed"><iframe src="https://www.youtube-nocookie.com/embed/%1$s%3$s" width="%2$spx" height="%4$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>', esc_attr($matches[1]), $options['youtube_nocookie']['width'], $relvideo, $height);
         
         return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
     }
 
     public function oembed_url_filter($provider, $url, $args) {
         $host = parse_url($provider, PHP_URL_HOST);
-        if ($host == 'www.video.uni-erlangen.de')
-            $this->videoportal = $provider;
-
+        if ($host == 'www.video.uni-erlangen.de') {
+            $this->videoportal[] = array($url => $provider);
+        }
         return $provider;
     }
 
     public function oembed_html_filter($html, $url, $args, $post_id) {
-        if ($this->videoportal) {
-            unset($args['discover']);
-            $cachekey = '_oembed_' . md5($url . serialize($args));
-            $cache = get_post_meta($post_id, $cachekey, true);
-
-            $video = $this->fetch($this->videoportal, $url, $args);
-
-            $poster = plugins_url('/', __FILE__) . 'images/video-fau-800x400.png';
-            $html = do_shortcode(sprintf('[video width="%1$s" height="%2$s" src="%3$s%4$s" poster="%5$s"][/video]', $video->width, $video->height, $video->provider_url, $video->file, $poster));
-
-            $cache = ( $html ) ? $html : '{{unknown}}';
-            if (!empty($cache)) {
-                update_post_meta($post_id, $cachekey, $cache);
+        $provider = null;
+        foreach($this->videoportal as $val) {
+            if(isset($val[$url])) {
+                $provider = $val[$url];
+            }
+        }
+        if ($provider) {
+            $video = $this->fetch($provider, $url, $args);
+            if (isset($video->html)) {
+                $html = $video->html;
             }
         }
         return $html;
     }
 
-    /**
-     * 
-    private function delete_oembed_cache($post_id) {
-        $post_metas = get_post_custom_keys($post_id);
-        if (empty($post_metas)) {
-            return;
-        }
-        foreach ($post_metas as $post_meta_key) {
-            if ('_oembed_' == substr($post_meta_key, 0, 8)) {
-                delete_post_meta($post_id, $post_meta_key);
-            }
-        }
-    }
-     * 
-     */
     private function fetch($provider, $url, $args = '') {
         $args = wp_parse_args($args, wp_embed_defaults());
 
@@ -511,11 +481,13 @@ class FAU_oEmbed {
         $provider_url_with_args = add_query_arg('format', 'json', $provider_url_with_args);
         $response = wp_safe_remote_get($provider_url_with_args);
 
-        if (501 == wp_remote_retrieve_response_code($response))
+        if (501 == wp_remote_retrieve_response_code($response)) {
             return new WP_Error('not-implemented');
+        }
 
-        if (!$body = wp_remote_retrieve_body($response))
+        if (!$body = wp_remote_retrieve_body($response)) {
             return false;
+        }
 
         return $this->parse_json($body);
     }

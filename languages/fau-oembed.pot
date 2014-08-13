@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FAU-oEmbed\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-23 14:19+0100\n"
+"POT-Creation-Date: 2014-08-13 17:01+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: RRZE-Webteam\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 1.6.5\n"
 "X-Poedit-SearchPath-0: ..\n"
 
 #: ../fau-oembed.php:61
@@ -31,11 +31,11 @@ msgid ""
 "auf die Wordpress-Version %s."
 msgstr ""
 
-#: ../fau-oembed.php:134
+#: ../fau-oembed.php:133
 msgid "oEmbed"
 msgstr ""
 
-#: ../fau-oembed.php:141
+#: ../fau-oembed.php:140
 msgid ""
 "WordPress bindet Videos, Bilder und andere Inhalte einiger Provider "
 "automatisch in Ihre Blog-Seiten ein, sobald Sie den Link auf die "
@@ -43,28 +43,28 @@ msgid ""
 "YouTube, Twitter und Flickr."
 msgstr ""
 
-#: ../fau-oembed.php:142 ../fau-oembed.php:243
+#: ../fau-oembed.php:141 ../fau-oembed.php:242
 msgid "Standardwerte für eingebettete Objekte"
 msgstr ""
 
-#: ../fau-oembed.php:143
+#: ../fau-oembed.php:142
 msgid ""
 "Hier können Sie einstellen, in welcher Größe die Inhalte automatisch "
 "eingebunden werden. Bei Objekten, bei denen das Seitenverhältnis fest "
 "vorgegeben ist (z.B. Videos), wird hierbei auf die kleinste Größe beschränkt."
 msgstr ""
 
-#: ../fau-oembed.php:144
+#: ../fau-oembed.php:143
 msgid ""
 "Sofern Sie die automatische Einbindung von YouTube-Videos ohne Cookies "
 "aktiviert haben, werden diese in der hierbei festgelegten Größe angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:148 ../fau-oembed.php:248
+#: ../fau-oembed.php:147 ../fau-oembed.php:247
 msgid "Automatische Einbindung von FAU-Karten"
 msgstr ""
 
-#: ../fau-oembed.php:149
+#: ../fau-oembed.php:148
 msgid ""
 "Die Friedrich-Alexander-Universität Erlangen-Nürnberg bietet die "
 "Möglichkeit, Karten von Standorten universitärer Einrichtungen zu erstellen. "
@@ -73,66 +73,66 @@ msgid ""
 "angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:150
+#: ../fau-oembed.php:149
 msgid "So erstellen Sie Ihre FAU-Karte:"
 msgstr ""
 
-#: ../fau-oembed.php:152
+#: ../fau-oembed.php:151
 #, php-format
 msgid "Gehen Sie auf den %s."
 msgstr ""
 
-#: ../fau-oembed.php:153
+#: ../fau-oembed.php:152
 msgid ""
 "Geben Sie den Standort der FAU an, den Sie in Ihrer Karte anzeigen möchten."
 msgstr ""
 
-#: ../fau-oembed.php:154
+#: ../fau-oembed.php:153
 msgid "Klicken Sie auf <i>Abschicken</i>."
 msgstr ""
 
-#: ../fau-oembed.php:155
+#: ../fau-oembed.php:154
 msgid ""
 "Kopieren Sie den angezeigten direkten Link zum iFrame und geben Sie diesen "
 "auf Ihrer Blog-Seite an."
 msgstr ""
 
-#: ../fau-oembed.php:160 ../fau-oembed.php:253
+#: ../fau-oembed.php:159 ../fau-oembed.php:252
 msgid "Automatische Einbindung des FAU Videoportals"
 msgstr ""
 
-#: ../fau-oembed.php:161
+#: ../fau-oembed.php:160
 msgid ""
 "Wenn Sie hier die automatische Einbindung des FAU Videoportals aktivieren, "
 "wird Ihnen statt des Links der Clip in Ihrer Blog-Seite angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:162
+#: ../fau-oembed.php:161
 msgid "So binden Sie einen Clip des Videoportals ein:"
 msgstr ""
 
-#: ../fau-oembed.php:164
+#: ../fau-oembed.php:163
 #, php-format
 msgid "Gehen Sie auf das %s."
 msgstr ""
 
-#: ../fau-oembed.php:165
+#: ../fau-oembed.php:164
 msgid "Wählen Sie das Video aus, das Sie in Ihrem Blog anzeigen möchten."
 msgstr ""
 
-#: ../fau-oembed.php:166
+#: ../fau-oembed.php:165
 msgid "Kopieren Sie die Adresse des <i>Anschauen</i>-Links des Videos."
 msgstr ""
 
-#: ../fau-oembed.php:167
+#: ../fau-oembed.php:166
 msgid "Fügen Sie die kopierte Adresse auf Ihrer Blog-Seite ein."
 msgstr ""
 
-#: ../fau-oembed.php:172 ../fau-oembed.php:257
+#: ../fau-oembed.php:171 ../fau-oembed.php:256
 msgid "Automatische Einbindung von YouTube-Videos ohne Cookies"
 msgstr ""
 
-#: ../fau-oembed.php:173
+#: ../fau-oembed.php:172
 #, php-format
 msgid ""
 "Wenn Sie hier die automatische Einbindung von YouTube-Videos ohne Cookies "
@@ -140,81 +140,77 @@ msgid ""
 "Seite %s"
 msgstr ""
 
-#: ../fau-oembed.php:175
+#: ../fau-oembed.php:174
 msgid ""
 "auf Ihrer Blog-Seite das YouTube-Video ohne die Verwendung von Cookies und"
 msgstr ""
 
-#: ../fau-oembed.php:176
+#: ../fau-oembed.php:175
 msgid "zusätzlich noch der Link zu dem Video auf YouTube angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:178
+#: ../fau-oembed.php:177
 msgid ""
 "Dabei können Sie die Breite angeben, in der YouTube-Videos auf Ihrer Seite "
 "dargestellt werden."
 msgstr ""
 
-#: ../fau-oembed.php:179
+#: ../fau-oembed.php:178
 msgid ""
 "Wenn Sie die Option <i>Anzeige ähnlicher Videos ausblenden</i> aktivieren, "
 "werden Ihnen am Ende Ihres Videos keine ähnlichen Videos als Vorschau "
 "angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:184
+#: ../fau-oembed.php:183
 msgid "Übersicht"
 msgstr ""
 
-#: ../fau-oembed.php:190
+#: ../fau-oembed.php:189
 msgid "FAU-Karte"
 msgstr ""
 
-#: ../fau-oembed.php:196
+#: ../fau-oembed.php:195
 msgid "FAU Videoportal"
 msgstr ""
 
-#: ../fau-oembed.php:202
+#: ../fau-oembed.php:201
 msgid "YouTube ohne Cookies"
 msgstr ""
 
-#: ../fau-oembed.php:206
+#: ../fau-oembed.php:205
 msgid ""
 "<p><strong>Für mehr Information:</strong></p><p><a href=\"http://blogs.fau."
 "de/webworking\">RRZE-Webworking</a></p><p><a href=\"https://github.com/RRZE-"
 "Webteam\">RRZE-Webteam in Github</a></p>"
 msgstr ""
 
-#: ../fau-oembed.php:226
+#: ../fau-oembed.php:225
 msgid "Einstellungen &rsaquo; oEmbed"
 msgstr ""
 
-#: ../fau-oembed.php:245 ../fau-oembed.php:259
+#: ../fau-oembed.php:244 ../fau-oembed.php:258
 msgid "Breite"
 msgstr ""
 
-#: ../fau-oembed.php:246
+#: ../fau-oembed.php:245
 msgid "Höhe"
 msgstr ""
 
-#: ../fau-oembed.php:249 ../fau-oembed.php:254 ../fau-oembed.php:258
+#: ../fau-oembed.php:248 ../fau-oembed.php:253 ../fau-oembed.php:257
 msgid "Aktivieren"
 msgstr ""
 
-#: ../fau-oembed.php:260
+#: ../fau-oembed.php:259
 msgid "Anzeige ähnlicher Videos ausblenden"
 msgstr ""
 
-#: ../fau-oembed.php:328
+#: ../fau-oembed.php:320
 msgid "Zu empfehlen ist eine Breite von mindestens 350px."
 msgstr ""
 
-#: ../fau-oembed.php:335
+#: ../fau-oembed.php:327
 msgid ""
 "Funktioniert nur, wenn die automatische Einbindung von YouTube-Videos "
 "aktiviert ist."
-msgstr ""
-
-#: ../fau-oembed.php:444
-msgid "YouTube-Video"
 msgstr ""
