@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-oEmbed
  * Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
- * Version: 2.1
+ * Version: 2.1.14.10.01
  * Author: RRZE-Webteam
  * Author URI: https://github.com/RRZE-Webteam/
  * License: GPLv2 or later
@@ -29,7 +29,7 @@ register_activation_hook(__FILE__, array('FAU_oEmbed', 'activation'));
 
 class FAU_oEmbed {
 
-    const version = '2.1'; // Plugin-Version
+    const version = '2.1.14.10.01'; // Plugin-Version
     const option_name = '_fau_oembed';
     const textdomain = 'fau-oembed';
     const php_version = '5.3'; // Minimal erforderliche PHP-Version
@@ -127,6 +127,8 @@ class FAU_oEmbed {
 
         add_filter('oembed_fetch_url', array($this, 'oembed_url_filter'), 10, 3);
         add_filter('embed_oembed_html', array($this, 'oembed_html_filter'), 10, 4);
+        
+        add_shortcode('faukarte', array($this, 'shortcode_faukarte'));
     }
 
     public function add_options_page() {
@@ -152,7 +154,14 @@ class FAU_oEmbed {
             '<li>' . __('Geben Sie den Standort der FAU an, den Sie in Ihrer Karte anzeigen möchten.', self::textdomain) . '</li>',
             '<li>' . __('Klicken Sie auf <i>Abschicken</i>.', self::textdomain) . '</li>',
             '<li>' . __('Kopieren Sie den angezeigten direkten Link zum iFrame und geben Sie diesen auf Ihrer Blog-Seite an.', self::textdomain) . '</li>',
-            '</ol>'
+            '</ol>',
+            '<p><strong>' . __('Einbindung von FAU-Karten über Shortcode', self::textdomain) . '</strong></p>',
+            '<p>' . __('Alternativ kann eine Karte von http://karte.fau.de auch über den Shortcode [faukarte] mit folgenden Parametern eingebunden werden:', self::textdomain) . '</p>',
+            '<ol>',
+            '<li>' . __('url: Adresse des anzuzeigenden Kartenausschnitts.', self::textdomain) . '</li>',
+            '<li>' . __('width: Breite des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
+            '<li>' . __('height: Höhe des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
+            '</ol>',            
         );
 
         $content_fauvideo = array(
@@ -371,6 +380,18 @@ class FAU_oEmbed {
         if ($options['faukarte']['active'] == true) {
             wp_oembed_add_provider('http://karte.fau.de/api/v1/iframe/*', 'http://karte.fau.de/api/v1/oembed?url=');
         }
+    }
+    
+    public function shortcode_faukarte($atts) {
+        $default = array(
+            'url' => 'http://karte.fau.de',
+            'width' => '720',
+            'height' => '400'
+        );
+        $atts = shortcode_atts($default, $atts);       
+        extract($atts);
+        $output = sprintf('<iframe src="%1$s" width="%2$s" height="%3$s" seamless style="border: 0; padding: 0; margin: 0; overflow: hidden;"></iframe>', $url, $width, $height);
+        return $output;
     }
 
     /*
