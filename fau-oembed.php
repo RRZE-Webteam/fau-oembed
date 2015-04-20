@@ -393,13 +393,9 @@ class FAU_oEmbed {
         $atts = shortcode_atts($default, $atts);       
         extract($atts);
         $karte_api = 'karte.fau.de/api/v1/iframe/';
-        if ( is_ssl() ) {
-            $protokoll = "https://";        
-            if(strpos($url, 'http://')!==false) str_replace ('http://', $protokoll, $url);
-        } else {
-            $protokoll = "http://";
-        }
-        if(strpos($url, $karte_api)==false) $url = $protokoll . $karte_api . $url;
+        $protokoll = "https://";        
+        if(strpos($url, 'http://')!==false) $url = str_replace('http://', $protokoll, $url);
+        if(strpos($url, $karte_api)===false) $url = $protokoll . $karte_api . $url;
         $output = sprintf('<iframe src="%1$s" width="%2$s" height="%3$s" seamless style="border: 0; padding: 0; margin: 0; overflow: hidden;"></iframe>', $url, $width, $height);
         return $output;
     }
