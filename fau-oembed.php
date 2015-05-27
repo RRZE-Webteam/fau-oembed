@@ -385,7 +385,7 @@ class FAU_oEmbed {
     }
     
     public function shortcode_faukarte($atts) {
-        
+        //http://karte.fau.de/#14/49.4332/11.0977 wird zu http://karte.fau.de/api/v1/iframe/zoom/14/center/49.4332,11.0977
         $default = array(
             'url' => 'https://karte.fau.de/api/v1/iframe/',
             'width' => '720',
@@ -394,34 +394,15 @@ class FAU_oEmbed {
         $atts = shortcode_atts($default, $atts);       
         extract($atts);
         $karte_api = 'karte.fau.de/api/v1/iframe/';
+        $karte_start = 'karte.fau.de/#';
         $protokoll = "https://";        
         if(strpos($url, 'http://')!==false) $url = str_replace('http://', $protokoll, $url);
-        if(strpos($url, $karte_api)===false) $url = $protokoll . $karte_api . $url;
+        if(strpos($url, $karte_start)===false) {
+            if(strpos($url, $karte_api)===false) $url = $protokoll . $karte_api . $url;
+        }
         $output = sprintf('<iframe src="%1$s" width="%2$s" height="%3$s" seamless style="border: 0; padding: 0; margin: 0; overflow: hidden;"></iframe>', $url, $width, $height);
         return $output;
     }
-
-    /*
-     * Versuch, die FAU-Karte nicht über add_provider sondern über register_handler einzubinden um die Größenangabe nur für die FAU-Karte zu beeinflussen
-     * 
-    public function fau_karte() {
-        $options = $this->get_options();
-        if ($options['faukarte']['active'] == true) {
-            //wp_embed_register_handler('faukarte', '#http://karte\.fau\.de/api/v1/iframe/([a-z0-9 //\-_]+)#i', 'wp_embed_handler_faukarte');
-            wp_embed_register_handler('faukarte', '#http://karte\.fau\.de/api/v1/iframe/address/findelgasse#i', 'wp_embed_handler_faukarte');
-        }
-    }
-
-    public function wp_embed_handler_faukarte($matches, $attr, $url, $rawattr) {
-        $options = $this->get_options();
-        $embed = sprintf(
-                '<div class="embed-faukarte"><iframe src="http://karte.fau.de/api/v1/iframe/%1$s" width="%2$spx" height="%3$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>', esc_attr($matches[1]), $options['faukarte']['width'], $options['faukarte']['height']
-        );
-
-        return apply_filters('embed_faukarte', $embed, $matches, $attr, $url, $rawattr);
-    }
-     * 
-     */
 
     public function fau_videoportal() {
         $options = $this->get_options();
