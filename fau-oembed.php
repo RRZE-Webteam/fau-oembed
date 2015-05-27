@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-oEmbed
  * Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
- * Version: 2.1.2
+ * Version: 2.1.3
  * Author: RRZE-Webteam
  * Author URI: https://github.com/RRZE-Webteam/
  * License: GPLv2 or later
@@ -158,9 +158,10 @@ class FAU_oEmbed {
             '<p><strong>' . __('Einbindung von FAU-Karten über Shortcode', self::textdomain) . '</strong></p>',
             '<p>' . __('Alternativ kann eine Karte von http://karte.fau.de auch über den Shortcode [faukarte] mit folgenden Parametern eingebunden werden:', self::textdomain) . '</p>',
             '<ol>',
-            '<li>' . __('url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes http://karte.fau.de', self::textdomain) . '</li>',
+            '<li>' . __('url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes http://karte.fau.de/api/v1/iframe/', self::textdomain) . '</li>',
             '<li>' . __('width: Breite des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
             '<li>' . __('height: Höhe des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
+            '<li>' . __('Beispiel: [faukarte url="address/martensstraße 1" width="100%" height="100px"]', self::textdomain) . '</li>',
             '</ol>',            
         );
 
@@ -425,13 +426,20 @@ class FAU_oEmbed {
     public function fau_videoportal() {
         $options = $this->get_options();
         if ($options['fau_videoportal'] == true) {
-            wp_oembed_add_provider('http://www.video.uni-erlangen.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('http://www.video.fau.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('http://video.fau.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('http://www.fau-tv.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('http://fau-tv.de/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('http://www.fau.tv/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('http://fau.tv/webplayer/id/*', 'http://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('http://www.video.uni-erlangen.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('https://www.video.uni-erlangen.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');            
+            wp_oembed_add_provider('http://www.video.fau.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('https://www.video.fau.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('http://video.fau.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('https://video.fau.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('http://www.fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('https://www.fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('http://fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('https://fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');            
+            wp_oembed_add_provider('http://www.fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('https://www.fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('http://fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
+            wp_oembed_add_provider('https://fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');            
             //wp_oembed_add_provider('http://www.video.uni-erlangen.de/clip/id/*', 'http://www.dev.video.uni-erlangen.de/services/oembed/?url=');      //vom Videoportal noch nicht unterstützt
         }
     }
