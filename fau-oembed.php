@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-oEmbed
  * Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
- * Version: 2.1.4
+ * Version: 2.1.5
  * Author: RRZE-Webteam
  * Author URI: https://github.com/RRZE-Webteam/
  * License: GPLv2 or later
@@ -159,10 +159,11 @@ class FAU_oEmbed {
             '<p><strong>' . __('Einbindung von FAU-Karten über Shortcode', self::textdomain) . '</strong></p>',
             '<p>' . __('Alternativ kann eine Karte von http://karte.fau.de auch über den Shortcode [faukarte] mit folgenden Parametern eingebunden werden:', self::textdomain) . '</p>',
             '<ol>',
-            '<li>' . __('url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes http://karte.fau.de/api/v1/iframe/', self::textdomain) . '</li>',
+            '<li>' . sprintf(__('url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes %1$s. Hier können Sie auch direkt die URL des gewählten Kartenausschnittes ohne vorangestelltes %2$s verwenden.', self::textdomain), 'https://karte.fau.de/api/v1/iframe/', 'https://karte.fau.de/')  . '</li>',
             '<li>' . __('width: Breite des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
             '<li>' . __('height: Höhe des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
-            '<li>' . __('Beispiel: [faukarte url="address/martensstraße 1" width="100%" height="100px"]', self::textdomain) . '</li>',
+            '<li>' . __('zoom: Zoomfaktor für den anzuzeigenden Kartenausschnitt (Wert zwischen 1 und 19, je größer der Wert desto größer die Darstellung).', self::textdomain) . '</li>',            
+            '<li>' . __('Beispiel: [faukarte url="address/martensstraße 1" width="100%" height="100px" zoom="12"]', self::textdomain) . '</li>',
             '</ol>',            
         );
 
@@ -174,7 +175,7 @@ class FAU_oEmbed {
             '<li>' . sprintf(__('Gehen Sie auf das %s.', self::textdomain), '<a href="http://www.video.uni-erlangen.de/" target="_blank">Videoportal der Friedrich-Alexander-Universität Erlangen-Nürnberg</a>') . '</li>',
             '<li>' . __('Wählen Sie das Video aus, das Sie in Ihrem Blog anzeigen möchten.', self::textdomain) . '</li>',
             '<li>' . __('Kopieren Sie die Adresse des <i>Anschauen</i>-Links des Videos.', self::textdomain) . '</li>',
-            '<li>' . __('Fügen Sie die kopierte Adresse auf Ihrer Blog-Seite ein.', self::textdomain) . '</li>',
+            '<li>' . __('Fügen Sie die kopierte Adresse auf Ihrer Seite ein.', self::textdomain) . '</li>',
             '</ol>'
         );
 
@@ -382,6 +383,8 @@ class FAU_oEmbed {
         if ($options['faukarte']['active'] == true) {
             wp_oembed_add_provider('http://karte.fau.de/api/v1/iframe/*', 'https://karte.fau.de/api/v1/oembed?url=');
             wp_oembed_add_provider('https://karte.fau.de/api/v1/iframe/*', 'https://karte.fau.de/api/v1/oembed?url=');
+            //$this->faukarte_oembed_add_provider('http://karte.fau.de/*', 'https://karte.fau.de/api/v1/oembed?url=');
+            //$this->faukarte_oembed_add_provider('https://karte.fau.de/*', 'https://karte.fau.de/api/v1/oembed?url=');            
         }
     }
     
@@ -390,7 +393,8 @@ class FAU_oEmbed {
         $default = array(
             'url' => 'https://karte.fau.de/api/v1/iframe/',
             'width' => '720',
-            'height' => '400'
+            'height' => '400',
+            'zoom' => ''
         );
         $atts = shortcode_atts($default, $atts);       
         extract($atts);
@@ -398,8 +402,9 @@ class FAU_oEmbed {
         $karte_start = 'karte.fau.de/#';
         $protokoll = "https://";        
         if(strpos($url, 'http://')!==false) $url = str_replace('http://', $protokoll, $url);
-        if(strpos($url, $karte_start)===false) {
+        if(strpos($url, $karte_start)===false) {      
             if(strpos($url, $karte_api)===false) $url = $protokoll . $karte_api . $url;
+            if( $zoom )     $url =  $url . "/zoom/" . $zoom;
         }
         $output = sprintf('<iframe src="%1$s" width="%2$s" height="%3$s" seamless style="border: 0; padding: 0; margin: 0; overflow: hidden;"></iframe>', $url, $width, $height);
         return $output;

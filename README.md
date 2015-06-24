@@ -28,8 +28,9 @@ Parameter:
 2. Adressausschnitt von http://karte.fau.de auswählen und Adresszeile kopieren
 - width: Breite des anzuzeigenden Kartenausschnitts (Pixel-Angaben oder Prozent-Wert)
 - height: Höhe des anzuzeigenden Kartenausschnitts (Pixel-Angaben oder Prozent-Wert)
+- zoom: Zoomfaktor für den anzuzeigenden Kartenausschnitt (Wert zwischen 1 und 19, je größer der Wert desto größer die Darstellung)
 Beispiel:    
-[faukarte url="address/martensstraße 1" width="100%" height="100px"]]    
+[faukarte url="address/martensstraße 1" width="100%" height="100px" zoom="12"]]    
 
 Automatische Einbindung von YouTube-Videos bei Angabe der URL.    
 
