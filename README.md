@@ -43,6 +43,6 @@ Automatische Einbindung von YouTube-Videos bei Angabe der URL.
 WP-Einstellungsmenü: Einstellungen › oEmbed    
 
 - Aktivierung der jeweiligen automatischen Einbindung
-- Festlegen der Standardwerte für eingebettete Objekte
+- Festlegen der Standardwerte für eingebettete Objekte (Änderung von Steffi [faukarte] 29.6.15: Breite: 620; Höhe 300)
 - Festlegen der Breite von YouTube-Videos
 - Anzeige ähnlicher YouTube-Videos deaktivieren
