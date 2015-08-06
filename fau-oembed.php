@@ -1,12 +1,13 @@
 <?php
-/**
- * Plugin Name: FAU-oEmbed
- * Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
- * Version: 2.1.5
- * Author: RRZE-Webteam
- * Author URI: https://github.com/RRZE-Webteam/
- * License: GPLv2 or later
- */
+/*
+  Plugin Name: FAU-oEmbed
+  Plugin URI: https://github.com/RRZE-Webteam/fau-oembed
+  Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
+  Version: 2.1.6
+  Author: RRZE-Webteam
+  Author URI: https://github.com/RRZE-Webteam/
+  License: GPLv2 or later
+*/
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +30,7 @@ register_activation_hook(__FILE__, array('FAU_oEmbed', 'activation'));
 
 class FAU_oEmbed {
 
-    const version = '2.1.2'; // Plugin-Version
+    const version = '2.1.6'; // Plugin-Version
     const option_name = '_fau_oembed';
     const textdomain = 'fau-oembed';
     const php_version = '5.3'; // Minimal erforderliche PHP-Version
@@ -118,6 +119,7 @@ class FAU_oEmbed {
 
         add_action('admin_init', array($this, 'admin_init'));
         add_action('admin_menu', array($this, 'add_options_page'));
+	add_action('admin_init', array($this, 'oembed_shortcodes_rte_button'));
 
         add_filter('embed_defaults', array($this, 'embed_defaults'));
 
@@ -484,7 +486,18 @@ class FAU_oEmbed {
         }
         return $html;
     }
+    
+    public function oembed_shortcodes_rte_button() {
+        if( current_user_can('edit_posts') &&  current_user_can('edit_pages') ) {
+            add_filter( 'mce_external_plugins', array($this, 'oembed_rte_add_buttons' ));
+        }
+    }
 
+    public function oembed_rte_add_buttons( $plugin_array ) {
+        $plugin_array['oembedrteshortcodes'] = plugin_dir_url(__FILE__) . 'js/tinymce-shortcodes.js';
+        return $plugin_array;
+    }
+    
     private function fetch($provider, $url, $args = '') {
         $args = wp_parse_args($args, wp_embed_defaults());
 
