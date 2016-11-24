@@ -7,7 +7,7 @@
   Author: RRZE-Webteam
   Author URI: https://github.com/RRZE-Webteam/
   License: GPLv2 or later
-*/
+ */
 /*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
+
+
 
 add_action('plugins_loaded', array('FAU_oEmbed', 'instance'));
 
@@ -47,14 +50,23 @@ class FAU_oEmbed {
 
         return self::$instance;
     }
-    
+
+    public function __construct() {
+        add_action('init', function() {
+
+            wp_embed_register_handler(
+                    'forbes', '#https://www\.video\.uni-erlangen\.de/webplayer/id/([\d]+)/?#i', array($this, 'wp_embed_handler_forbes')
+            );
+        });
+    }
+
     private $oembed_option_page = null;
     private $videoportal = array();
 
     public static function activation() {
         self::version_compare();
     }
-    
+
     private static function version_compare() {
         $error = '';
 
@@ -102,6 +114,19 @@ class FAU_oEmbed {
         return $options;
     }
 
+    public function wp_embed_handler_forbes($matches, $attr, $url, $rawattr) {
+
+
+        $html = file_get_contents('https://www.video.uni-erlangen.de/services/oembed/?url=' . $matches[0]);
+
+        preg_match('/https(.*)m4v/iU', htmlspecialchars($html), $mactch);
+
+        $embed = '[video width="1280" height="720" src="' . $mactch[0] . '"][/video]';
+
+
+        return apply_filters('embed_forbes', $embed, $matches, $attr, $url, $rawattr);
+    }
+
     private function get_options() {
         $defaults = $this->default_options();
 
@@ -119,7 +144,7 @@ class FAU_oEmbed {
 
         add_action('admin_init', array($this, 'admin_init'));
         add_action('admin_menu', array($this, 'add_options_page'));
-	add_action('admin_init', array($this, 'oembed_shortcodes_rte_button'));
+        add_action('admin_init', array($this, 'oembed_shortcodes_rte_button'));
 
         add_filter('embed_defaults', array($this, 'embed_defaults'));
 
@@ -129,9 +154,8 @@ class FAU_oEmbed {
 
         //add_filter('oembed_fetch_url', array($this, 'oembed_url_filter'), 10, 3);
         //add_filter('embed_oembed_html', array($this, 'oembed_html_filter'), 10, 4);
-        
+
         add_shortcode('faukarte', array($this, 'shortcode_faukarte'));
-        
     }
 
     public function add_options_page() {
@@ -161,12 +185,12 @@ class FAU_oEmbed {
             '<p><strong>' . __('Einbindung von FAU-Karten über Shortcode', self::textdomain) . '</strong></p>',
             '<p>' . __('Alternativ kann eine Karte von http://karte.fau.de auch über den Shortcode [faukarte] mit folgenden Parametern eingebunden werden:', self::textdomain) . '</p>',
             '<ol>',
-            '<li>' . sprintf(__('url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes %1$s. Hier können Sie auch direkt die URL des gewählten Kartenausschnittes ohne vorangestelltes %2$s verwenden.', self::textdomain), 'https://karte.fau.de/api/v1/iframe/', 'https://karte.fau.de/')  . '</li>',
+            '<li>' . sprintf(__('url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes %1$s. Hier können Sie auch direkt die URL des gewählten Kartenausschnittes ohne vorangestelltes %2$s verwenden.', self::textdomain), 'https://karte.fau.de/api/v1/iframe/', 'https://karte.fau.de/') . '</li>',
             '<li>' . __('width: Breite des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
             '<li>' . __('height: Höhe des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
-            '<li>' . __('zoom: Zoomfaktor für den anzuzeigenden Kartenausschnitt (Wert zwischen 1 und 19, je größer der Wert desto größer die Darstellung).', self::textdomain) . '</li>',            
+            '<li>' . __('zoom: Zoomfaktor für den anzuzeigenden Kartenausschnitt (Wert zwischen 1 und 19, je größer der Wert desto größer die Darstellung).', self::textdomain) . '</li>',
             '<li>' . __('Beispiel: [faukarte url="address/martensstraße 1" width="100%" height="100px" zoom="12"]', self::textdomain) . '</li>',
-            '</ol>',            
+            '</ol>',
         );
 
         $content_fauvideo = array(
@@ -296,19 +320,19 @@ class FAU_oEmbed {
 
     /* Modifizieren der Anzeige nur für FAU-Karten funktioniert nicht    
      * 
-    public function faukarte_width() {
-        $options = $this->get_options();
-        ?>
-        <input type='text' name="<?php printf('%s[faukarte][width]', self::option_name); ?>" value="<?php echo $options['faukarte']['width']; ?>">
-        <?php
-    }
+      public function faukarte_width() {
+      $options = $this->get_options();
+      ?>
+      <input type='text' name="<?php printf('%s[faukarte][width]', self::option_name); ?>" value="<?php echo $options['faukarte']['width']; ?>">
+      <?php
+      }
 
-    public function faukarte_height() {
-        $options = $this->get_options();
-        ?>
-        <input type='text' name="<?php printf('%s[faukarte][height]', self::option_name); ?>" value="<?php echo $options['faukarte']['height']; ?>">
-        <?php
-    }
+      public function faukarte_height() {
+      $options = $this->get_options();
+      ?>
+      <input type='text' name="<?php printf('%s[faukarte][height]', self::option_name); ?>" value="<?php echo $options['faukarte']['height']; ?>">
+      <?php
+      }
      * 
      */
 
@@ -358,10 +382,10 @@ class FAU_oEmbed {
         /*
          * Modifizieren der Anzeige nur für FAU-Karten funktioniert noch nicht
          * 
-        $input['faukarte']['width'] = (int) $input['faukarte']['width'];
-        $input['faukarte']['height'] = (int) $input['faukarte']['height'];
-        $input['faukarte']['width'] = !empty($input['faukarte']['width']) ? $input['faukarte']['width'] : $defaults['faukarte']['width'];
-        $input['faukarte']['height'] = !empty($input['faukarte']['height']) ? $input['faukarte']['height'] : $defaults['faukarte']['height'];
+          $input['faukarte']['width'] = (int) $input['faukarte']['width'];
+          $input['faukarte']['height'] = (int) $input['faukarte']['height'];
+          $input['faukarte']['width'] = !empty($input['faukarte']['width']) ? $input['faukarte']['width'] : $defaults['faukarte']['width'];
+          $input['faukarte']['height'] = !empty($input['faukarte']['height']) ? $input['faukarte']['height'] : $defaults['faukarte']['height'];
          */
 
         $input['youtube_nocookie']['active'] = isset($input['youtube_nocookie']['active']) ? true : false;
@@ -389,7 +413,7 @@ class FAU_oEmbed {
             //$this->faukarte_oembed_add_provider('https://karte.fau.de/*', 'https://karte.fau.de/api/v1/oembed?url=');            
         }
     }
-    
+
     public function shortcode_faukarte($atts) {
         //http://karte.fau.de/#14/49.4332/11.0977 wird zu http://karte.fau.de/api/v1/iframe/zoom/14/center/49.4332,11.0977
         $default = array(
@@ -398,15 +422,18 @@ class FAU_oEmbed {
             'height' => '400',
             'zoom' => ''
         );
-        $atts = shortcode_atts($default, $atts);       
+        $atts = shortcode_atts($default, $atts);
         extract($atts);
         $karte_api = 'karte.fau.de/api/v1/iframe/';
         $karte_start = 'karte.fau.de/#';
-        $protokoll = "https://";        
-        if(strpos($url, 'http://')!==false) $url = str_replace('http://', $protokoll, $url);
-        if(strpos($url, $karte_start)===false) {      
-            if(strpos($url, $karte_api)===false) $url = $protokoll . $karte_api . $url;
-            if( $zoom )     $url =  $url . "/zoom/" . $zoom;
+        $protokoll = "https://";
+        if (strpos($url, 'http://') !== false)
+            $url = str_replace('http://', $protokoll, $url);
+        if (strpos($url, $karte_start) === false) {
+            if (strpos($url, $karte_api) === false)
+                $url = $protokoll . $karte_api . $url;
+            if ($zoom)
+                $url = $url . "/zoom/" . $zoom;
         }
         $output = sprintf('<iframe src="%1$s" width="%2$s" height="%3$s" seamless style="border: 0; padding: 0; margin: 0; overflow: hidden;"></iframe>', $url, $width, $height);
         return $output;
@@ -414,11 +441,11 @@ class FAU_oEmbed {
 
     public function fau_videoportal() {
         $options = $this->get_options();
-        
+
 
         if ($options['fau_videoportal'] == true) {
             wp_oembed_add_provider('http://www.video.uni-erlangen.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('https://www.video.uni-erlangen.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');              
+            wp_oembed_add_provider('https://www.video.uni-erlangen.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('http://www.video.fau.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('https://www.video.fau.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('http://video.fau.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
@@ -426,11 +453,11 @@ class FAU_oEmbed {
             wp_oembed_add_provider('http://www.fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('https://www.fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('http://fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('https://fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');            
+            wp_oembed_add_provider('https://fau-tv.de/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('http://www.fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('https://www.fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             wp_oembed_add_provider('http://fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
-            wp_oembed_add_provider('https://fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');          
+            wp_oembed_add_provider('https://fau.tv/webplayer/id/*', 'https://www.video.uni-erlangen.de/services/oembed/?url=');
             //wp_oembed_add_provider('http://www.video.uni-erlangen.de/clip/id/*', 'http://www.dev.video.uni-erlangen.de/services/oembed/?url=');      //vom Videoportal noch nicht unterstützt
         }
     }
@@ -455,11 +482,11 @@ class FAU_oEmbed {
         if ($options['youtube_nocookie']['norel'] == 1) {
             $relvideo = '?rel=0';
         }
-        
+
         $height = $options['youtube_nocookie']['width'] * 36 / 64;
-        
+
         $embed = sprintf('<div class="oembed"><iframe src="https://www.youtube-nocookie.com/embed/%1$s%3$s" width="%2$spx" height="%4$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>', esc_attr($matches[1]), $options['youtube_nocookie']['width'], $relvideo, $height);
-        
+
         return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
     }
 
@@ -473,8 +500,8 @@ class FAU_oEmbed {
 
     public function oembed_html_filter($html, $url, $args, $post_id) {
         $provider = null;
-        foreach($this->videoportal as $val) {
-            if(isset($val[$url])) {
+        foreach ($this->videoportal as $val) {
+            if (isset($val[$url])) {
                 $provider = $val[$url];
             }
         }
@@ -486,18 +513,18 @@ class FAU_oEmbed {
         }
         return $html;
     }
-    
+
     public function oembed_shortcodes_rte_button() {
-        if( current_user_can('edit_posts') &&  current_user_can('edit_pages') ) {
-            add_filter( 'mce_external_plugins', array($this, 'oembed_rte_add_buttons' ));
+        if (current_user_can('edit_posts') && current_user_can('edit_pages')) {
+            add_filter('mce_external_plugins', array($this, 'oembed_rte_add_buttons'));
         }
     }
 
-    public function oembed_rte_add_buttons( $plugin_array ) {
+    public function oembed_rte_add_buttons($plugin_array) {
         $plugin_array['oembedrteshortcodes'] = plugin_dir_url(__FILE__) . 'js/tinymce-shortcodes.js';
         return $plugin_array;
     }
-    
+
     private function fetch($provider, $url, $args = '') {
         $args = wp_parse_args($args, wp_embed_defaults());
 
@@ -510,7 +537,7 @@ class FAU_oEmbed {
         if (is_wp_error($result) && 'not-implemented' == $result->get_error_code()) {
             return false;
         }
-        
+
         return ( $result && !is_wp_error($result) ) ? $result : false;
     }
 
