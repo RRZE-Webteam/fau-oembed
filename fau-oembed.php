@@ -55,7 +55,7 @@ class FAU_oEmbed {
         add_action('init', function() {
 
             wp_embed_register_handler(
-                    'forbes', '#https://www\.video\.uni-erlangen\.de/webplayer/id/([\d]+)/?#i', array($this, 'wp_embed_handler_forbes')
+                    'fautv', '#https://www\.video\.uni-erlangen\.de/webplayer/id/([\d]+)/?#i', array($this, 'wp_embed_handler_fautv')
             );
         });
     }
@@ -114,7 +114,7 @@ class FAU_oEmbed {
         return $options;
     }
 
-    public function wp_embed_handler_forbes($matches, $attr, $url, $rawattr) {
+    public function wp_embed_handler_fautv($matches, $attr, $url, $rawattr) {
 
 
         $html = file_get_contents('https://www.video.uni-erlangen.de/services/oembed/?url=' . $matches[0]);
@@ -124,7 +124,7 @@ class FAU_oEmbed {
         $embed = '[video width="1280" height="720" src="' . $mactch[0] . '"][/video]';
 
 
-        return apply_filters('embed_forbes', $embed, $matches, $attr, $url, $rawattr);
+        return apply_filters('embed_fautv', $embed, $matches, $attr, $url, $rawattr);
     }
 
     private function get_options() {
