@@ -58,6 +58,8 @@ class FAU_oEmbed {
                     'fautv', '#https://www\.video\.uni-erlangen\.de/webplayer/id/([\d]+)/?#i', array($this, 'wp_embed_handler_fautv')
             );
         });
+
+        add_action('admin_enqueue_scripts', array($this, 'fau_oembed_enqueue_admin_script'));
     }
 
     private $oembed_option_page = null;
@@ -67,15 +69,28 @@ class FAU_oEmbed {
         self::version_compare();
     }
 
+    function fau_oembed_enqueue_admin_script() {
+
+        if (isset($_GET['page'])) {
+
+
+            if ($_GET['page'] == 'options-oembed') {
+                wp_enqueue_media();
+                wp_enqueue_script('fau-oembed-script', plugin_dir_url(__FILE__) . 'js/main.js');
+                wp_localize_script('fau-oembed-script', 'oembed_default_place_holder_img_url', plugin_dir_url(__FILE__) . '/img/default-thumbnail.jpg');
+            }
+        }
+    }
+
     private static function version_compare() {
         $error = '';
 
         if (version_compare(PHP_VERSION, self::php_version, '<')) {
-            $error = sprintf(__('Ihre PHP-Version %s ist veraltet. Bitte aktualisieren Sie mindestens auf die PHP-Version %s.', self::textdomain), PHP_VERSION, self::php_version);
+            $error = sprintf(__('Ihre PHP-Version %s ist veraltet. Bitte aktualisieren Sie mindestens auf die PHP-Version %s.','fau-oembed'), PHP_VERSION, self::php_version);
         }
 
         if (version_compare($GLOBALS['wp_version'], self::wp_version, '<')) {
-            $error = sprintf(__('Ihre Wordpress-Version %s ist veraltet. Bitte aktualisieren Sie mindestens auf die Wordpress-Version %s.', self::textdomain), $GLOBALS['wp_version'], self::wp_version);
+            $error = sprintf(__('Ihre Wordpress-Version %s ist veraltet. Bitte aktualisieren Sie mindestens auf die Wordpress-Version %s.','fau-oembed'), $GLOBALS['wp_version'], self::wp_version);
         }
 
         if (!empty($error)) {
@@ -96,7 +111,8 @@ class FAU_oEmbed {
         $options = array(
             'embed_defaults' => array(
                 'width' => $width,
-                'height' => $height
+                'height' => $height,
+                'place_holder' => plugin_dir_path(__DIR__) . '/images/placeholder.png',
             ),
             'faukarte' => array(
                 'active' => true,
@@ -116,12 +132,13 @@ class FAU_oEmbed {
 
     public function wp_embed_handler_fautv($matches, $attr, $url, $rawattr) {
 
+        $options = $this->get_options();
 
         $html = file_get_contents('https://www.video.uni-erlangen.de/services/oembed/?url=' . $matches[0]);
 
         preg_match('/https(.*)m4v/iU', htmlspecialchars($html), $mactch);
 
-        $embed = '[video width="1280" height="720" src="' . $mactch[0] . '"][/video]';
+        $embed = '[video width="' . $options['embed_defaults']['width'] . '" height="' . $options['embed_defaults']['height'] . '" src="' . $mactch[0] . '" poster="' . wp_get_attachment_url($options['embed_defaults']['place_holder']) . '"][/video]';
 
 
         return apply_filters('embed_fautv', $embed, $matches, $attr, $url, $rawattr);
@@ -144,7 +161,6 @@ class FAU_oEmbed {
 
         add_action('admin_init', array($this, 'admin_init'));
         add_action('admin_menu', array($this, 'add_options_page'));
-        add_action('admin_init', array($this, 'oembed_shortcodes_rte_button'));
 
         add_filter('embed_defaults', array($this, 'embed_defaults'));
 
@@ -159,88 +175,88 @@ class FAU_oEmbed {
     }
 
     public function add_options_page() {
-        $this->oembed_option_page = add_options_page(__('oEmbed', self::textdomain), __('oEmbed', self::textdomain), 'manage_options', 'options-oembed', array($this, 'options_oembed'));
+        $this->oembed_option_page = add_options_page(__('oEmbed','fau-oembed'), __('oEmbed','fau-oembed'), 'manage_options', 'options-oembed', array($this, 'options_oembed'));
         add_action('load-' . $this->oembed_option_page, array($this, 'oembed_help_menu'));
     }
 
     public function oembed_help_menu() {
 
         $content_overview = array(
-            '<p>' . __('WordPress bindet Videos, Bilder und andere Inhalte einiger Provider automatisch in Ihre Blog-Seiten ein, sobald Sie den Link auf die entsprechende Datei angeben. Unterstützt werden hierbei z.B. Daten von YouTube, Twitter und Flickr.', self::textdomain) . '</p>',
-            '<p><strong>' . __('Standardwerte für eingebettete Objekte', self::textdomain) . '</strong></p>',
-            '<p>' . __('Hier können Sie einstellen, in welcher Größe die Inhalte automatisch eingebunden werden. Bei Objekten, bei denen das Seitenverhältnis fest vorgegeben ist (z.B. Videos), wird hierbei auf die kleinste Größe beschränkt.', self::textdomain) . '</p>',
-            '<p>' . __('Sofern Sie die automatische Einbindung von YouTube-Videos ohne Cookies aktiviert haben, werden diese in der hierbei festgelegten Größe angezeigt.', self::textdomain) . '</p>'
+            '<p>' . __('WordPress bindet Videos, Bilder und andere Inhalte einiger Provider automatisch in Ihre Blog-Seiten ein, sobald Sie den Link auf die entsprechende Datei angeben. Unterstützt werden hierbei z.B. Daten von YouTube, Twitter und Flickr.','fau-oembed') . '</p>',
+            '<p><strong>' . __('Standardwerte für eingebettete Objekte','fau-oembed') . '</strong></p>',
+            '<p>' . __('Hier können Sie einstellen, in welcher Größe die Inhalte automatisch eingebunden werden. Bei Objekten, bei denen das Seitenverhältnis fest vorgegeben ist (z.B. Videos), wird hierbei auf die kleinste Größe beschränkt.','fau-oembed') . '</p>',
+            '<p>' . __('Sofern Sie die automatische Einbindung von YouTube-Videos ohne Cookies aktiviert haben, werden diese in der hierbei festgelegten Größe angezeigt.','fau-oembed') . '</p>'
         );
 
         $content_faukarte = array(
-            '<p><strong>' . __('Automatische Einbindung von FAU-Karten', self::textdomain) . '</strong></p>',
-            '<p>' . __('Die Friedrich-Alexander-Universität Erlangen-Nürnberg bietet die Möglichkeit, Karten von Standorten universitärer Einrichtungen zu erstellen. Sofern Sie hier die automatische Einbindung von diesen FAU-Karten aktivieren, wird Ihnen statt eines Links die Karte in Ihrer Blog-Seite angezeigt.', self::textdomain) . '</p>',
-            '<p>' . __('So erstellen Sie Ihre FAU-Karte:', self::textdomain) . '</p>',
+            '<p><strong>' . __('Automatische Einbindung von FAU-Karten','fau-oembed') . '</strong></p>',
+            '<p>' . __('Die Friedrich-Alexander-Universität Erlangen-Nürnberg bietet die Möglichkeit, Karten von Standorten universitärer Einrichtungen zu erstellen. Sofern Sie hier die automatische Einbindung von diesen FAU-Karten aktivieren, wird Ihnen statt eines Links die Karte in Ihrer Blog-Seite angezeigt.','fau-oembed') . '</p>',
+            '<p>' . __('So erstellen Sie Ihre FAU-Karte:','fau-oembed') . '</p>',
             '<ol>',
-            '<li>' . sprintf(__('Gehen Sie auf den %s.', self::textdomain), '<a href="http://karte.fau.de/generator" target="_blank">Kartengenerator der Friedrich-Alexander-Universität Erlangen-Nürnberg</a>') . '</li>',
-            '<li>' . __('Geben Sie den Standort der FAU an, den Sie in Ihrer Karte anzeigen möchten.', self::textdomain) . '</li>',
-            '<li>' . __('Klicken Sie auf <i>Abschicken</i>.', self::textdomain) . '</li>',
-            '<li>' . __('Kopieren Sie den angezeigten direkten Link zum iFrame und geben Sie diesen auf Ihrer Blog-Seite an.', self::textdomain) . '</li>',
+            '<li>' . sprintf(__('Gehen Sie auf den %s.','fau-oembed'), '<a href="http://karte.fau.de/generator" target="_blank">Kartengenerator der Friedrich-Alexander-Universität Erlangen-Nürnberg</a>') . '</li>',
+            '<li>' . __('Geben Sie den Standort der FAU an, den Sie in Ihrer Karte anzeigen möchten.','fau-oembed') . '</li>',
+            '<li>' . __('Klicken Sie auf <i>Abschicken</i>.','fau-oembed') . '</li>',
+            '<li>' . __('Kopieren Sie den angezeigten direkten Link zum iFrame und geben Sie diesen auf Ihrer Blog-Seite an.','fau-oembed') . '</li>',
             '</ol>',
-            '<p><strong>' . __('Einbindung von FAU-Karten über Shortcode', self::textdomain) . '</strong></p>',
-            '<p>' . __('Alternativ kann eine Karte von http://karte.fau.de auch über den Shortcode [faukarte] mit folgenden Parametern eingebunden werden:', self::textdomain) . '</p>',
+            '<p><strong>' . __('Einbindung von FAU-Karten über Shortcode','fau-oembed') . '</strong></p>',
+            '<p>' . __('Alternativ kann eine Karte von http://karte.fau.de auch über den Shortcode [faukarte] mit folgenden Parametern eingebunden werden:','fau-oembed') . '</p>',
             '<ol>',
-            '<li>' . sprintf(__('url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes %1$s. Hier können Sie auch direkt die URL des gewählten Kartenausschnittes ohne vorangestelltes %2$s verwenden.', self::textdomain), 'https://karte.fau.de/api/v1/iframe/', 'https://karte.fau.de/') . '</li>',
-            '<li>' . __('width: Breite des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
-            '<li>' . __('height: Höhe des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).', self::textdomain) . '</li>',
-            '<li>' . __('zoom: Zoomfaktor für den anzuzeigenden Kartenausschnitt (Wert zwischen 1 und 19, je größer der Wert desto größer die Darstellung).', self::textdomain) . '</li>',
-            '<li>' . __('Beispiel: [faukarte url="address/martensstraße 1" width="100%" height="100px" zoom="12"]', self::textdomain) . '</li>',
+            '<li>' . sprintf(__('url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes %1$s. Hier können Sie auch direkt die URL des gewählten Kartenausschnittes ohne vorangestelltes %2$s verwenden.','fau-oembed'), 'https://karte.fau.de/api/v1/iframe/', 'https://karte.fau.de/') . '</li>',
+            '<li>' . __('width: Breite des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).','fau-oembed') . '</li>',
+            '<li>' . __('height: Höhe des anzuzeigenden Kartenausschnitts (auch %-Angaben sind erlaubt).','fau-oembed') . '</li>',
+            '<li>' . __('zoom: Zoomfaktor für den anzuzeigenden Kartenausschnitt (Wert zwischen 1 und 19, je größer der Wert desto größer die Darstellung).','fau-oembed') . '</li>',
+            '<li>' . __('Beispiel: [faukarte url="address/martensstraße 1" width="100%" height="100px" zoom="12"]','fau-oembed') . '</li>',
             '</ol>',
         );
 
         $content_fauvideo = array(
-            '<p><strong>' . __('Automatische Einbindung des FAU Videoportals', self::textdomain) . '</strong></p>',
-            '<p>' . __('Wenn Sie hier die automatische Einbindung des FAU Videoportals aktivieren, wird Ihnen statt des Links der Clip in Ihrer Blog-Seite angezeigt.', self::textdomain) . '</p>',
-            '<p>' . __('So binden Sie einen Clip des Videoportals ein:', self::textdomain) . '</p>',
+            '<p><strong>' . __('Automatische Einbindung des FAU Videoportals','fau-oembed') . '</strong></p>',
+            '<p>' . __('Wenn Sie hier die automatische Einbindung des FAU Videoportals aktivieren, wird Ihnen statt des Links der Clip in Ihrer Blog-Seite angezeigt.','fau-oembed') . '</p>',
+            '<p>' . __('So binden Sie einen Clip des Videoportals ein:','fau-oembed') . '</p>',
             '<ol>',
-            '<li>' . sprintf(__('Gehen Sie auf das %s.', self::textdomain), '<a href="http://www.video.uni-erlangen.de/" target="_blank">Videoportal der Friedrich-Alexander-Universität Erlangen-Nürnberg</a>') . '</li>',
-            '<li>' . __('Wählen Sie das Video aus, das Sie in Ihrem Blog anzeigen möchten.', self::textdomain) . '</li>',
-            '<li>' . __('Kopieren Sie die Adresse des <i>Anschauen</i>-Links des Videos.', self::textdomain) . '</li>',
-            '<li>' . __('Fügen Sie die kopierte Adresse auf Ihrer Seite ein.', self::textdomain) . '</li>',
+            '<li>' . sprintf(__('Gehen Sie auf das %s.','fau-oembed'), '<a href="http://www.video.uni-erlangen.de/" target="_blank">Videoportal der Friedrich-Alexander-Universität Erlangen-Nürnberg</a>') . '</li>',
+            '<li>' . __('Wählen Sie das Video aus, das Sie in Ihrem Blog anzeigen möchten.','fau-oembed') . '</li>',
+            '<li>' . __('Kopieren Sie die Adresse des <i>Anschauen</i>-Links des Videos.','fau-oembed') . '</li>',
+            '<li>' . __('Fügen Sie die kopierte Adresse auf Ihrer Seite ein.','fau-oembed') . '</li>',
             '</ol>'
         );
 
         $content_youtube_nocookie = array(
-            '<p><strong>' . __('Automatische Einbindung von YouTube-Videos ohne Cookies', self::textdomain) . '</strong></p>',
-            '<p>' . sprintf(__('Wenn Sie hier die automatische Einbindung von YouTube-Videos ohne Cookies aktivieren, wird Ihnen bei der Angabe eines Links zu einem Video von der Seite %s', self::textdomain), '<a href="http://www.youtube.de/" target="_blank">YouTube</a>') . '</p>',
+            '<p><strong>' . __('Automatische Einbindung von YouTube-Videos ohne Cookies','fau-oembed') . '</strong></p>',
+            '<p>' . sprintf(__('Wenn Sie hier die automatische Einbindung von YouTube-Videos ohne Cookies aktivieren, wird Ihnen bei der Angabe eines Links zu einem Video von der Seite %s','fau-oembed'), '<a href="http://www.youtube.de/" target="_blank">YouTube</a>') . '</p>',
             '<ol>',
-            '<li>' . __('auf Ihrer Blog-Seite das YouTube-Video ohne die Verwendung von Cookies und', self::textdomain) . '</li>',
-            '<li>' . __('zusätzlich noch der Link zu dem Video auf YouTube angezeigt.', self::textdomain) . '</li>',
+            '<li>' . __('auf Ihrer Blog-Seite das YouTube-Video ohne die Verwendung von Cookies und','fau-oembed') . '</li>',
+            '<li>' . __('zusätzlich noch der Link zu dem Video auf YouTube angezeigt.','fau-oembed') . '</li>',
             '</ol>',
-            '<p>' . __('Dabei können Sie die Breite angeben, in der YouTube-Videos auf Ihrer Seite dargestellt werden.', self::textdomain) . '</p>',
-            '<p>' . __('Wenn Sie die Option <i>Anzeige ähnlicher Videos ausblenden</i> aktivieren, werden Ihnen am Ende Ihres Videos keine ähnlichen Videos als Vorschau angezeigt.', self::textdomain) . '</p>',
+            '<p>' . __('Dabei können Sie die Breite angeben, in der YouTube-Videos auf Ihrer Seite dargestellt werden.','fau-oembed') . '</p>',
+            '<p>' . __('Wenn Sie die Option <i>Anzeige ähnlicher Videos ausblenden</i> aktivieren, werden Ihnen am Ende Ihres Videos keine ähnlichen Videos als Vorschau angezeigt.','fau-oembed') . '</p>',
         );
 
         $help_tab_overview = array(
             'id' => 'overview',
-            'title' => __('Übersicht', self::textdomain),
+            'title' => __('Übersicht','fau-oembed'),
             'content' => implode(PHP_EOL, $content_overview),
         );
 
         $help_tab_faukarte = array(
             'id' => 'faukarte',
-            'title' => __('FAU-Karte', self::textdomain),
+            'title' => __('FAU-Karte','fau-oembed'),
             'content' => implode(PHP_EOL, $content_faukarte),
         );
 
         $help_tab_fauvideo = array(
             'id' => 'fauvideo',
-            'title' => __('FAU Videoportal', self::textdomain),
+            'title' => __('FAU Videoportal','fau-oembed'),
             'content' => implode(PHP_EOL, $content_fauvideo),
         );
 
         $help_tab_youtube_nocookie = array(
             'id' => 'youtube_nocookie',
-            'title' => __('YouTube ohne Cookies', self::textdomain),
+            'title' => __('YouTube ohne Cookies','fau-oembed'),
             'content' => implode(PHP_EOL, $content_youtube_nocookie),
         );
 
-        $help_sidebar = __('<p><strong>Für mehr Information:</strong></p><p><a href="http://blogs.fau.de/webworking">RRZE-Webworking</a></p><p><a href="https://github.com/RRZE-Webteam">RRZE-Webteam in Github</a></p>', self::textdomain);
+        $help_sidebar = __('<p><strong>Für mehr Information:</strong></p><p><a href="http://blogs.fau.de/webworking">RRZE-Webworking</a></p><p><a href="https://github.com/RRZE-Webteam">RRZE-Webteam in Github</a></p>','fau-oembed');
 
         $screen = get_current_screen();
 
@@ -260,7 +276,7 @@ class FAU_oEmbed {
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
-            <h2><?php echo esc_html(__('Einstellungen &rsaquo; oEmbed', self::textdomain)); ?></h2>
+            <h2><?php echo esc_html(__('Einstellungen &rsaquo; oEmbed','fau-oembed')); ?></h2>
 
             <form method="post" action="options.php">
                 <?php
@@ -277,24 +293,27 @@ class FAU_oEmbed {
 
         register_setting('oembed_options', self::option_name, array($this, 'options_validate'));
 
-        add_settings_section('embed_default_section', __('Standardwerte für eingebettete Objekte', self::textdomain), '__return_false', 'oembed_options');
+        add_settings_section('embed_default_section', __('Standardwerte für eingebettete Objekte','fau-oembed'), '__return_false', 'oembed_options');
 
-        add_settings_field('embed_defaults_width', __('Breite', self::textdomain), array($this, 'embed_defaults_width'), 'oembed_options', 'embed_default_section');
-        add_settings_field('embed_defaults_height', __('Höhe', self::textdomain), array($this, 'embed_defaults_height'), 'oembed_options', 'embed_default_section');
-
-        add_settings_section('faukarte_section', __('Automatische Einbindung von FAU-Karten', self::textdomain), '__return_false', 'oembed_options');
-        add_settings_field('faukarte_active', __('Aktivieren', self::textdomain), array($this, 'faukarte_active'), 'oembed_options', 'faukarte_section');
-        //add_settings_field('faukarte_width', __( 'Breite', self::textdomain ), array($this, 'faukarte_width'), 'oembed_options', 'faukarte_section');
-        //add_settings_field('faukarte_height', __( 'Höhe', self::textdomain ), array($this, 'faukarte_height'), 'oembed_options', 'faukarte_section');
-
-        add_settings_section('videoportal_section', __('Automatische Einbindung des FAU Videoportals', self::textdomain), '__return_false', 'oembed_options');
-        add_settings_field('videoportal_active', __('Aktivieren', self::textdomain), array($this, 'videoportal_active'), 'oembed_options', 'videoportal_section');
+        add_settings_field('embed_defaults_width', __('Breite','fau-oembed'), array($this, 'embed_defaults_width'), 'oembed_options', 'embed_default_section');
+        add_settings_field('embed_defaults_height', __('Höhe','fau-oembed'), array($this, 'embed_defaults_height'), 'oembed_options', 'embed_default_section');
+        add_settings_field('embed_defaults_place_holder', __('Place Holder','fau-oembed'), array($this, 'embed_defaults_place_hoder'), 'oembed_options', 'embed_default_section');
 
 
-        add_settings_section('youtube_nocookie_section', __('Automatische Einbindung von YouTube-Videos ohne Cookies', self::textdomain), '__return_false', 'oembed_options');
-        add_settings_field('youtube_nocookie_active', __('Aktivieren', self::textdomain), array($this, 'youtube_nocookie_active'), 'oembed_options', 'youtube_nocookie_section');
-        add_settings_field('youtube_nocookie_width', __('Breite', self::textdomain), array($this, 'youtube_nocookie_width'), 'oembed_options', 'youtube_nocookie_section');
-        add_settings_field('youtube_nocookie_norel', __('Anzeige ähnlicher Videos ausblenden', self::textdomain), array($this, 'youtube_nocookie_norel'), 'oembed_options', 'youtube_nocookie_section');
+
+        add_settings_section('faukarte_section', __('Automatische Einbindung von FAU-Karten','fau-oembed'), '__return_false', 'oembed_options');
+        add_settings_field('faukarte_active', __('Aktivieren','fau-oembed'), array($this, 'faukarte_active'), 'oembed_options', 'faukarte_section');
+        //add_settings_field('faukarte_width', __( 'Breite','fau-oembed' ), array($this, 'faukarte_width'), 'oembed_options', 'faukarte_section');
+        //add_settings_field('faukarte_height', __( 'Höhe','fau-oembed' ), array($this, 'faukarte_height'), 'oembed_options', 'faukarte_section');
+
+        add_settings_section('videoportal_section', __('Automatische Einbindung des FAU Videoportals','fau-oembed'), '__return_false', 'oembed_options');
+        add_settings_field('videoportal_active', __('Aktivieren','fau-oembed'), array($this, 'videoportal_active'), 'oembed_options', 'videoportal_section');
+
+
+        add_settings_section('youtube_nocookie_section', __('Automatische Einbindung von YouTube-Videos ohne Cookies','fau-oembed'), '__return_false', 'oembed_options');
+        add_settings_field('youtube_nocookie_active', __('Aktivieren','fau-oembed'), array($this, 'youtube_nocookie_active'), 'oembed_options', 'youtube_nocookie_section');
+        add_settings_field('youtube_nocookie_width', __('Breite','fau-oembed'), array($this, 'youtube_nocookie_width'), 'oembed_options', 'youtube_nocookie_section');
+        add_settings_field('youtube_nocookie_norel', __('Anzeige ähnlicher Videos ausblenden','fau-oembed'), array($this, 'youtube_nocookie_norel'), 'oembed_options', 'youtube_nocookie_section');
     }
 
     public function embed_defaults_width() {
@@ -308,6 +327,40 @@ class FAU_oEmbed {
         $options = $this->get_options();
         ?>
         <input type='text' name="<?php printf('%s[embed_defaults][height]', self::option_name); ?>" value="<?php echo $options['embed_defaults']['height']; ?>">
+        <?php
+    }
+
+    public function embed_defaults_place_hoder() {
+
+        $options = $this->get_options();
+
+        if (!empty($options['embed_defaults']['place_holder'])) {
+
+            $remove_class = '';
+            $place_holder_image_url = wp_get_attachment_url($options['embed_defaults']['place_holder']);
+        } else {
+            $remove_class = 'hidden';
+            $place_holder_image_url = plugin_dir_url(__FILE__) . '/img/default-thumbnail.jpg';
+        }
+        ?>
+
+
+
+
+        <input class="regular-text" type="hidden" id="fau-embed-place-holder" name="<?php printf('%s[embed_defaults][place_holder]', self::option_name); ?>"  value="<?php echo $options['embed_defaults']['place_holder']; ?>"/>
+
+
+
+
+        <img height="128" width="128" id="fau-embed-place-holder-img-preview"  src="<?php echo $place_holder_image_url; ?>" />
+
+        <br/>
+        <button id="fau-embed-add-place-holder-img" type="button" class="button button-large" value="" > <?php echo __('Upload',self::textdomain); ?> </button>
+        <button  id="fau-embed-place-holder-delete-img" type="button" class="button button-large <?php echo $remove_class; ?>" > <?php echo __('Remove',self::textdomain); ?> </button> 
+
+
+
+
         <?php
     }
 
@@ -355,14 +408,14 @@ class FAU_oEmbed {
     public function youtube_nocookie_width() {
         $options = $this->get_options();
         ?>
-        <input type='text' name="<?php printf('%s[youtube_nocookie][width]', self::option_name); ?>" value="<?php echo $options['youtube_nocookie']['width']; ?>"><p class="description"><?php _e('Zu empfehlen ist eine Breite von mindestens 350px.', self::textdomain); ?></p>
+        <input type='text' name="<?php printf('%s[youtube_nocookie][width]', self::option_name); ?>" value="<?php echo $options['youtube_nocookie']['width']; ?>"><p class="description"><?php _e('Zu empfehlen ist eine Breite von mindestens 350px.','fau-oembed'); ?></p>
         <?php
     }
 
     public function youtube_nocookie_norel() {
         $options = $this->get_options();
         ?>
-        <input type='checkbox' name="<?php printf('%s[youtube_nocookie][norel]', self::option_name); ?>" <?php checked($options['youtube_nocookie']['norel'], true); ?>><p class="description"><?php _e('Funktioniert nur, wenn die automatische Einbindung von YouTube-Videos aktiviert ist.', self::textdomain); ?></p>
+        <input type='checkbox' name="<?php printf('%s[youtube_nocookie][norel]', self::option_name); ?>" <?php checked($options['youtube_nocookie']['norel'], true); ?>><p class="description"><?php _e('Funktioniert nur, wenn die automatische Einbindung von YouTube-Videos aktiviert ist.','fau-oembed'); ?></p>
 
         <?php
     }
@@ -406,7 +459,11 @@ class FAU_oEmbed {
 
     public function fau_karte() {
         $options = $this->get_options();
+
+        wp_oembed_remove_provider('http://karte.fau.de/api/v1/iframe/*');
+        wp_oembed_remove_provider('https://karte.fau.de/api/v1/iframe/*');
         if ($options['faukarte']['active'] == true) {
+
             wp_oembed_add_provider('http://karte.fau.de/api/v1/iframe/*', 'https://karte.fau.de/api/v1/oembed?url=');
             wp_oembed_add_provider('https://karte.fau.de/api/v1/iframe/*', 'https://karte.fau.de/api/v1/oembed?url=');
             //$this->faukarte_oembed_add_provider('http://karte.fau.de/*', 'https://karte.fau.de/api/v1/oembed?url=');
@@ -512,17 +569,6 @@ class FAU_oEmbed {
             }
         }
         return $html;
-    }
-
-    public function oembed_shortcodes_rte_button() {
-        if (current_user_can('edit_posts') && current_user_can('edit_pages')) {
-            add_filter('mce_external_plugins', array($this, 'oembed_rte_add_buttons'));
-        }
-    }
-
-    public function oembed_rte_add_buttons($plugin_array) {
-        $plugin_array['oembedrteshortcodes'] = plugin_dir_url(__FILE__) . 'js/tinymce-shortcodes.js';
-        return $plugin_array;
     }
 
     private function fetch($provider, $url, $args = '') {
