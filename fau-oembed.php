@@ -60,8 +60,9 @@ class FAU_oEmbed {
         });
 
         add_action('admin_enqueue_scripts', array($this, 'fau_oembed_enqueue_admin_script'));
+        add_action('wp_enqueue_scripts', array($this, 'fau_oembed_enqueue_style'));
     }
-
+ 
     private $oembed_option_page = null;
     private $videoportal = array();
 
@@ -82,6 +83,12 @@ class FAU_oEmbed {
         }
     }
 
+    function fau_oembed_enqueue_style(){
+        
+        
+        wp_enqueue_style('fau-oembed-style', plugin_dir_url(__FILE__) . 'css/style.css');
+        
+    }
     private static function version_compare() {
         $error = '';
 
@@ -138,7 +145,7 @@ class FAU_oEmbed {
 
         preg_match('/https(.*)m4v/iU', htmlspecialchars($html), $mactch);
 
-        $embed = '[video width="' . $options['embed_defaults']['width'] . '" height="' . $options['embed_defaults']['height'] . '" src="' . $mactch[0] . '" poster="' . wp_get_attachment_url($options['embed_defaults']['place_holder']) . '"][/video]';
+        $embed = '<div id="fau-oembed-video" style="width:'.$options['embed_defaults']['width'].'px;height:'.$options['embed_defaults']['width'].'px"> [video preload="none" width="' . $options['embed_defaults']['width'] . '" height="' . $options['embed_defaults']['height'] . '" src="' . $mactch[0] . '" poster="' . wp_get_attachment_url($options['embed_defaults']['place_holder']) . '"][/video]</div>';
 
 
         return apply_filters('embed_fautv', $embed, $matches, $attr, $url, $rawattr);
@@ -542,7 +549,7 @@ class FAU_oEmbed {
 
         $height = $options['youtube_nocookie']['width'] * 36 / 64;
 
-        $embed = sprintf('<div class="oembed"><iframe src="https://www.youtube-nocookie.com/embed/%1$s%3$s" width="%2$spx" height="%4$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>', esc_attr($matches[1]), $options['youtube_nocookie']['width'], $relvideo, $height);
+        $embed = sprintf('<div  class="oembed"><iframe src="https://www.youtube-nocookie.com/embed/%1$s%3$s" width="%2$spx" height="%4$spx" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></div>', esc_attr($matches[1]), $options['youtube_nocookie']['width'], $relvideo, $height);
 
         return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
     }
