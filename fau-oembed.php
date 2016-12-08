@@ -3,7 +3,7 @@
   Plugin Name: FAU-oEmbed
   Plugin URI: https://github.com/RRZE-Webteam/fau-oembed
   Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
-  Version: 2.2.0
+  Version: 2.2.1
   Author: RRZE-Webteam
   Author URI: https://github.com/RRZE-Webteam/
   License: GPLv2 or later
@@ -65,8 +65,6 @@ class FAU_oEmbed {
         add_action('init', array($this, 'youtube_nocookie'));
 
         add_shortcode('faukarte', array($this, 'shortcode_faukarte'));
-        
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
         
     // Einbindung der Sprachdateien.
@@ -154,10 +152,6 @@ class FAU_oEmbed {
         }
         
         return $options;
-    }
-    
-    public function enqueue_scripts() {
-        wp_register_style('fau-oembed-style', plugin_dir_url(__FILE__) . 'css/frontend.css');
     }
 
     public function add_options_page() {
@@ -380,14 +374,12 @@ class FAU_oEmbed {
             return '';
         }
         
-        wp_enqueue_style('fau-oembed-style');
-        
         $file = $video['file'];
         
         if (isset($video['image'])) {
             $image = $video['image'];
         } else {
-            $image = plugins_url('/', __FILE__) . 'images/fau-800x400.png';
+            $image = plugin_dir_url(__FILE__) . 'images/fau-800x400.png';
         }
         
         if (isset($video['width']) && isset($video['height'])) {
@@ -404,8 +396,15 @@ class FAU_oEmbed {
                 }
             }
         }        
-                            
-        $output = '<div class="fauvideo" itemscope itemtype ="http://schema.org/Movie">' . PHP_EOL;
+        
+        $output = '<style type="text/css" media="screen">';
+        $output .= '@media (min-width: 767px) {' . PHP_EOL;
+        $output .= 'div.mejs-overlay-play {width: 100% !important; height: 100% !important;}' . PHP_EOL;
+        $output .= 'div.fau-oembed-video {width:' . $width . 'px; height:' . $height . 'px}' . PHP_EOL;
+        $output .= '}' . PHP_EOL;
+        $output .= '</style>' . PHP_EOL;
+
+        $output .= '<div class="fauvideo" itemscope itemtype ="http://schema.org/Movie">' . PHP_EOL;
 
         $output .= '<meta itemprop="contentUrl" content="'.$file.'">' . PHP_EOL;
         $output .= '<meta itemprop="height" content="'.$video['height'].'">' . PHP_EOL;
@@ -414,7 +413,7 @@ class FAU_oEmbed {
             $output .= '<meta itemprop="thumbnailUrl" content="'.$video['image'].'">' . PHP_EOL;
         }
 
-        $output .= '<div id="fau-oembed-video" style="width:' . $width . 'px; height:' . $height . 'px">' . PHP_EOL;
+        $output .= '<div class="fau-oembed-video">' . PHP_EOL;
         $output .= '[video preload="none" width="' . $width . '" height="' . $height . '" src="' . $file . '" poster="' . $image . '"][/video]' . PHP_EOL;
         $output .= '</div>' . PHP_EOL;
         
