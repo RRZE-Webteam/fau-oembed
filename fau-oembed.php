@@ -3,7 +3,7 @@
   Plugin Name: FAU-oEmbed
   Plugin URI: https://github.com/RRZE-Webteam/fau-oembed
   Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
-  Version: 2.2.1
+  Version: 2.2.2
   Author: RRZE-Webteam
   Author URI: https://github.com/RRZE-Webteam/
   License: GPLv2 or later
@@ -33,7 +33,7 @@ class FAU_oEmbed {
 
     const option_name = '_fau_oembed';
     const textdomain = 'fau-oembed';
-    const php_version = '5.6'; // Minimal erforderliche PHP-Version
+    const php_version = '5.5'; // Minimal erforderliche PHP-Version
     const wp_version = '4.6'; // Minimal erforderliche WordPress-Version
 
     protected static $instance = null;
