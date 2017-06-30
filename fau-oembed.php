@@ -3,7 +3,7 @@
   Plugin Name: FAU-oEmbed
   Plugin URI: https://github.com/RRZE-Webteam/fau-oembed
   Description: Automatische Einbindung der FAU-Karten und des FAU Videoportals, Einbindung von YouTube-Videos ohne Cookies.
-  Version: 2.4.0
+  Version: 2.4.1
   Author: RRZE-Webteam
   Author URI: https://github.com/RRZE-Webteam/
   License: GPLv2 or later
@@ -527,7 +527,7 @@ class FAU_oEmbed {
         wp_oembed_add_provider('http://www12.informatik.uni-erlangen.de/people/bininda/*', 'http://www12.informatik.uni-erlangen.de/people/bininda/test/');
         wp_oembed_add_provider('https://www12.informatik.uni-erlangen.de/oembed-objekte/*', 'https://www12.informatik.uni-erlangen.de/oembed/');
         
-        wp_oembed_add_provider('https://faumac.rrze.fau.de/oembed/software/*', 'https://faumac.rrze.fau.de/static/faumac_software.json/');
+        wp_oembed_add_provider('https://faumac.rrze.fau.de/oembed/*', 'https://faumac.rrze.fau.de/static/faumac_software.json/');
     }
     
 }
