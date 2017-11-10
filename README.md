@@ -36,15 +36,11 @@ Parameter:
 Beispiel:    
 [faukarte url="address/martensstraße 1" width="100%" height="100px" zoom="12"]]    
 
-
-
 Automatische Einbindung von YouTube-Videos bei Angabe der URL.    
 
 - ohne Cookies
 - ohne Anzeige ähnlicher Videos am Ende der Wiedergabe
 - zusätzlich wird unterhalb des Videos der Link zum Video angezeigt
-
-
 
 WP-Einstellungsmenü: Einstellungen › oEmbed    
 
