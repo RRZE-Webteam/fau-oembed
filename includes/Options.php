@@ -81,8 +81,7 @@ class Options {
      * Gibt den Namen der Option zurück.
      * @return string
      */
-    public static function get_option_name()
-    {
+    public static function get_option_name()  {
         return self::$option_name;
     }
 }
