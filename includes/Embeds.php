@@ -27,14 +27,42 @@ class Embeds {
     /*-----------------------------------------------------------------------------------*/  
     public function fau_karte() {
         if ($this->options->faukarte['active'] == true) {
-            wp_oembed_add_provider('http://karte.fau.de/api/v1/iframe/*', 'https://karte.fau.de/api/v1/oembed/');
-            wp_oembed_add_provider('https://karte.fau.de/api/v1/iframe/*', 'https://karte.fau.de/api/v1/oembed/');       
-	    
+	   wp_embed_register_handler('faukarteapi', '#https?://karte\.(uni\-erlangen|fau)\.de/api/v1/iframe/*#i', [$this, 'wp_embed_handler_faukartenapi']);  
+	    // for use with API
 	   wp_embed_register_handler('faukarte', '#https?://karte\.(uni\-erlangen|fau)\.de/\#([\d]+)/([\d\.]+)/([\d\.]+)#i', [$this, 'wp_embed_handler_faukarte']);  
+	    // for use direct from website
 	   // https://karte.fau.de/#17/49.59725/11.00835
         }
     }
-    public function wp_embed_handler_faukarte($matches, $attr, $url, $rawattr) {
+    public function wp_embed_handler_faukartenapi($matches, $attr, $url, $rawattr) {
+	$karte_api = $this->options->faukarte['apiurl'];
+         $karte_start = 'karte.fau.de/api/v1/iframe/';
+         $protokoll = "https://";
+        
+         if (strpos($url, 'http://') !== false) {
+            $url = str_replace('http://', $protokoll, $url);
+         }
+
+        
+         if (strpos($url, $karte_start) === false) {
+             if (strpos($url, $karte_api) === true)
+                $url = $protokoll . $karte_api . $url;
+	 }
+	$title = $this->options->faukarte['title'];
+	$id = uniqid();
+	
+	$embed = '<div class="fau-oembed" id="'.$id.'">';
+	$embed .= '<iframe title="'.$title.'" src="'.$url.'"';
+	$embed .= ' class="fau-karte defaultwidth"';
+	$embed .= ' seamless></iframe>';
+	$embed .= '</div>';
+
+	wp_enqueue_style('fau-oembed-style');
+        return apply_filters('embed_faukarte', $embed, $matches, $attr, $url, $rawattr);
+	
+    }
+    
+     public function wp_embed_handler_faukarte($matches, $attr, $url, $rawattr) {
 	$karte_api = $this->options->faukarte['apiurl'];
          $karte_start = 'karte.fau.de/#';
          $protokoll = "https://";
