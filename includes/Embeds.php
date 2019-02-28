@@ -17,7 +17,7 @@ class Embeds {
          add_action('init', [$this, 'fau_videoportal']);
          add_action('init', [$this, 'youtube_nocookie']);
          add_action('init', [$this, 'oembed_add_providers']);
-	
+	add_action('init', [$this, 'slideshare']);
 	
     }
 
@@ -49,11 +49,14 @@ class Embeds {
                 $url = $protokoll . $karte_api . $url;
 	 }
 	$title = $this->options->faukarte['title'];
+	$width = $this->options->embed_defaults['width'];
+	$height = $this->options->embed_defaults['height'];
+	
 	$id = uniqid();
 	
 	$embed = '<div class="fau-oembed" id="'.$id.'">';
 	$embed .= '<iframe title="'.$title.'" src="'.$url.'"';
-	$embed .= ' class="fau-karte defaultwidth"';
+	$embed .= ' class="fau-karte defaultwidth" width="'.$width.'" height="'.$height.'"';
 	$embed .= ' seamless></iframe>';
 	$embed .= '</div>';
 
@@ -78,11 +81,14 @@ class Embeds {
          }
 	
 	$title = $this->options->faukarte['title'];
+	$width = $this->options->embed_defaults['width'];
+	$height = $this->options->embed_defaults['height'];
+	 
 	$id = uniqid();
 	
 	$embed = '<div class="fau-oembed" id="'.$id.'">';
 	$embed .= '<iframe title="'.$title.'" src="'.$url.'"';
-	$embed .= ' class="fau-karte defaultwidth"';
+	$embed .= ' class="fau-karte defaultwidth" width="'.$width.'" height="'.$height.'"';
 	$embed .= ' seamless></iframe>';
 	$embed .= '</div>';
 
@@ -115,6 +121,7 @@ class Embeds {
 	$width = ! empty( $video['width'] ) ? $video['width'] : $this->options->embed_defaults['width'];
          $height = ! empty( $video['height'] ) ? $video['height'] : $this->options->embed_defaults['height'];	 
 	$image = ! empty( $video['preview_image'] ) ? $video['preview_image'] : $this->options->fau_videoportal['defaultthumb'];
+	$desc = ! empty( sanitize_text_field($video['description']) ) ? sanitize_text_field($video['description']) : $this->options->fau_videoportal['description'];
 	 
          $file = $video['file'];
 
@@ -132,17 +139,23 @@ class Embeds {
 	    $embed .= '<meta itemprop="name" content="'.$title.'">';
 	}
 	
-        $embed .= '<meta itemprop="url" content="'.$file.'">';
-        $embed .= '<meta itemprop="height" content="'.$video['height'].'">';
-        $embed .= '<meta itemprop="width" content="'.$video['width'].'">';
-        $embed .= '<meta itemprop="thumbnailUrl" content="'.$image.'">';
+	$embed .= '<meta itemprop="contentUrl" content="'.$file.'">';
+	$embed .= '<meta itemprop="url" content="'.$url.'">';
+	$embed .= '<meta itemprop="height" content="'.$video['height'].'">';
+	$embed .= '<meta itemprop="width" content="'.$video['width'].'">';
+	$embed .= '<meta itemprop="thumbnailUrl" content="'.$image.'">';
+	$embed .= '<meta itemprop="description" content="'.$desc.'">';
+	
+	
 	if (! empty( $data['author_name'] )) {
 	    $embed .= '<meta itemprop="author" content="'.$data['author_name'].'">';
 	}
 	if (! empty( $data['provider_name'] )) {
 	    $embed .= '<meta itemprop="provider" content="'.$data['provider_name'].'">';
 	}
-
+	if (! empty( $data['upload_date'] )) {
+	    $embed .= '<meta itemprop="uploadDate" content="'.$data['upload_date'].'">';
+	}
 	
          $embed .= '<div id="'.$id.'" class="fau-oembed-video">';	
          $embed .= '[video preload="none" width="' . $width . '" height="' . $height . '" src="' . $file . '" poster="' . $image . '"][/video]';
@@ -198,7 +211,8 @@ class Embeds {
 	
 	 
 	$embed = '<div class="fau-oembed oembed" itemscope itemtype="http://schema.org/VideoObject">';
-	 
+	
+
 	$id = $matches[1]."-".uniqid();
 	// we use a uniq id here, cause of the case, that the same video could be 
 	// displayed more as one time in the same website. this would then make an error,
@@ -209,8 +223,24 @@ class Embeds {
 	    $embed .= '<meta itemprop="name" content="'.$title.'">';
 	}
 	$embed .= '<meta itemprop="url" content="'.$url.'">';
+	$embed .= '<meta itemprop="contentUrl" content="'.$url.'">';
 	if (! empty( $data['thumbnail_url'] )) {
 	    $embed .= '<meta itemprop="thumbnail" content="'.$data['thumbnail_url'].'">';
+	}
+	
+
+	if (! empty( $data['description'] )) {
+	    $embed .= '<meta itemprop="description" content="'.$data['description'].'">';
+	} else {
+	    $desc = '';
+	    
+	    if (! empty( $data['provider_name'] )) {
+		$desc .= $data['provider_name'].' '.__('Video','fau-oembed');
+	    }
+	    if (! empty( $data['author_name'] )) {
+		$desc .= ' '.__('von','fau-oembed').' '.$data['author_name'];
+	    }
+	    $embed .= '<meta itemprop="description" content="'.$desc.'">';
 	}
 	if (! empty( $data['width'] )) {
 	    $embed .= '<meta itemprop="width" content="'.$data['width'].'">';
@@ -224,10 +254,16 @@ class Embeds {
 	if (! empty( $data['provider_name'] )) {
 	    $embed .= '<meta itemprop="provider" content="'.$data['provider_name'].'">';
 	}
+	
+	$usedefaultwidth = '';
+	if (empty( $data['width']))  {
+	    $usedefaultwidth = ' defaultwidth';
+	}
+	
 	if ($this->options->youtube['display_title']) {
-	    $embed .= '<iframe class="youtube defaultwidth"  aria-labelledby="'.$id.'"';
+	    $embed .= '<iframe class="youtube'.$usedefaultwidth.'" aria-labelledby="'.$id.'"';
 	} else {
-	    $embed .= '<iframe class="youtube defaultwidth" title="'.$title.'"';
+	    $embed .= '<iframe class="youtube'.$usedefaultwidth.'" title="'.$title.'"';
 	}
 	
 	$embed .= ' src="https://www.youtube-nocookie.com/embed/'.esc_attr($matches[1]).$relvideo.'" width="'.$width.'" height="'.$height.'"></iframe>';
@@ -237,7 +273,7 @@ class Embeds {
 	    if (! empty( $data['author_name'] )) {
 		$embed .= '<span class="author_name">'.$data['author_name'].'</span>, ';
 	    }
-	    $embed .= '<span class="url">'.$url.'</span>';
+	    $embed .= '<a href="'.$url.'">'.$url.'</a>';
 	    $embed .= '</div>';
 	}
 	$embed .= '</div>';
@@ -247,7 +283,118 @@ class Embeds {
 	wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
     }
+    
+    
+    /*-----------------------------------------------------------------------------------*/
+    /*  Slideshare
+    /*-----------------------------------------------------------------------------------*/    
+    public function slideshare() {
+        if ($this->options->slideshare['active'] == true) {
+            wp_oembed_remove_provider('#https?://(.+?\.)?slideshare\.net/.*#i');   
+            wp_embed_register_handler('slideshare', '#https?://(.+?\.)?slideshare\.net/.*#i', [$this, 'wp_embed_handler_slidershare']);
 
+        }
+    }
+
+    public function wp_embed_handler_slidershare($matches, $attr, $url, $rawattr) {
+        if (is_feed()) {
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                return sprintf('<a href="%1$s">%1$s</a>', $url);
+            } else {
+                return '';
+            }
+        }
+
+       
+	$data = OEmbed::get_data($url);
+	if (! $data) {
+	    return $url;
+	}
+	$title = ! empty( $data['title'] ) ? $data['title'] : $this->options->embed_defaults['title'];
+	$width = ! empty( $data['width'] ) ? $data['width'] : $this->options->embed_defaults['width'];
+	$height = ! empty( $data['height'] ) ?  $data['height'] : $this->options->embed_defaults['height'];
+	
+	 
+	$embed = '<div class="fau-oembed oembed" itemscope itemtype="http://schema.org/PresentationDigitalDocument">';
+	$id = uniqid();
+	// we use a uniq id here, cause of the case, that the same video could be 
+	// displayed more as one time in the same website. this would then make an error,
+	// cause id's habe to be uniq.
+	if ($this->options->slideshare['display_title']) {
+	    $embed .= '<h3 id="'.$id.'" itemprop="name">'.$title.'</h3>';
+	} else {
+	    $embed .= '<meta itemprop="name" content="'.$title.'">';
+	}
+	$embed .= '<meta itemprop="url" content="'.$url.'">';
+	if (! empty( $data['thumbnail_url'] )) {
+	    $embed .= '<meta itemprop="thumbnail" content="'.$data['thumbnail_url'].'">';
+	}
+	
+
+	if (! empty( $data['description'] )) {
+	    $embed .= '<meta itemprop="description" content="'.$data['description'].'">';
+	} else {
+	    $desc = '';
+	    
+	    if (! empty( $data['provider_name'] )) {
+		$desc .= $data['provider_name'].' '.__('Folien','fau-oembed');
+	    }
+	    if (! empty( $data['author_name'] )) {
+		$desc .= ' '.__('von','fau-oembed').' '.$data['author_name'];
+	    }
+	    $embed .= '<meta itemprop="description" content="'.$desc.'">';
+	}
+	
+	if (! empty( $data['author_name'] )) {
+	    $embed .= '<meta itemprop="author" content="'.$data['author_name'].'">';
+	}
+	if (! empty( $data['provider_name'] )) {
+	    $embed .= '<meta itemprop="provider" content="'.$data['provider_name'].'">';
+	}
+	
+	
+	if ($this->options->slideshare['display_title']) {
+	    $embed .= '<iframe class="slideshare defaultwidth" aria-labelledby="'.$id.'"';
+	} else {
+	    $embed .= '<iframe class="slideshare defaultwidth" title="'.$title.'"';
+	}
+	
+	
+	$frameurl = '';
+	$pattern        = '/src\=[\"|\\\']{1}([^\"\\\']*)[\"|\\\']{1}/i';
+	$isframeurl = preg_match( $pattern, $data['html'], $matches );
+
+	if ( $isframeurl && ! empty( $matches[1] ) ) {
+	    $frameurl = $matches[1];
+	}
+
+	$embed .= ' src="'.$frameurl.'" width="'.$width.'" height="'.$height.'"></iframe>';
+	if ($this->options->slideshare['display_source']) {
+	    $embed .= '<div class="caption">';
+	   
+	    
+	    if ($this->options->slideshare['display_title']) {
+		if (! empty( $data['author_name'] )) {
+		    $embed .= '<span class="author_name">'.$data['author_name'].'</span>';
+		}
+		$embed .= ' '.__('auf','fau-oembed').' <a href="'.$url.'">'.$data['provider_name'].'</a>';
+	    } else {
+		$embed .= '<a href="'.$url.'">'.$title.'</a>';
+		if (! empty( $data['author_name'] )) {
+		    $embed .= __('von', 'fau-oembed').' <span class="author_name">'.$data['author_name'].'</span>, ';
+		}
+
+	    }
+	    
+	    $embed .= '</div>';
+	}
+	$embed .= '</div>';
+	
+	
+	
+	wp_enqueue_style('fau-oembed-style');
+        return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
+    }
     /*-----------------------------------------------------------------------------------*/
     /*  Other Provider
     /*-----------------------------------------------------------------------------------*/   

@@ -12,6 +12,9 @@ defined('ABSPATH') || exit;
  */
  abstract class OEmbed {
 
+ 
+     
+     
     /*
      * Gist by https://gist.github.com/RadGH, 
      *      https://gist.github.com/RadGH/64d74e429583c5ab390f1395971b2495 
@@ -94,6 +97,15 @@ defined('ABSPATH') || exit;
 
 	    return $result;
     }
-
+    /*-----------------------------------------------------------------------------------*/
+    /* Set Defaults
+    /*-----------------------------------------------------------------------------------*/
+    
+    public function set_embed_defaults($embed_size){
+	$embed_size['width'] = $this->options->embed_defaults['width'];
+	$embed_size['height'] = $this->options->embed_defaults['height'];;
+	return $embed_size;
+    }
+    
     
  }

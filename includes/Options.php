@@ -35,8 +35,6 @@ class Options {
             ),
             'faukarte' => array(
 		'active'	    => true,
-		'width'	    => $width,
-		'height'	    => $height,
 		'apiurl'    => 'karte.fau.de/api/v1/iframe/',
 		'title'	    => __('FAU Karte','fau-oembed')
             ),
@@ -45,15 +43,20 @@ class Options {
 		'defaultthumb' => plugin_dir_url(dirname(__FILE__)) . 'assets/images/fau-800x400.png',
 		'display_title'	 => false,
 		'display_source'	=> false,
+		'description'	=> __('Keine Beschreibung verfügbar.','fau-oembed')
 	    ),
-	    
-		
             'youtube' => array(
 		'active' => true,
 		'norel' => 1,
 		'display_title'	    => false,
 		'display_source'	=> false,
-		
+		'description'	=> __('Keine Beschreibung verfügbar.','fau-oembed')
+            ),
+	    'slideshare' => array(
+		'active' => true,
+		'display_title'	    => true,
+		'display_source'	=> true,
+		'description'	=> __('Keine Beschreibung verfügbar.','fau-oembed')
             ),
 	  
 	    
@@ -84,4 +87,9 @@ class Options {
     public static function get_option_name()  {
         return self::$option_name;
     }
+    
+    
+    
+    
+
 }

@@ -51,7 +51,7 @@ class Settings {
     {
         ?>
         <div class="wrap">
-            <h2><?php echo __('Settings &rsaquo; FAU oEmbed', 'fau-oembed'); ?></h2>
+            <h2><?php echo __('Einstellungen &rsaquo; FAU oEmbed', 'fau-oembed'); ?></h2>
             <form method="post" action="options.php">
             <?php
             settings_fields('fau_oembed_options');
@@ -72,20 +72,24 @@ class Settings {
         register_setting('fau_oembed_options', $this->option_name, [$this, 'options_validate']);
 
 
+
         add_settings_section('embed_default_section', __('Standardwerte für eingebettete Objekte','fau-oembed'), '__return_false', 'fau_oembed_options');
 
-        add_settings_field('embed_defaults_width', __('Breite','fau-oembed'), array($this, 'embed_defaults_width'), 'fau_oembed_options', 'embed_default_section');
-        add_settings_field('embed_defaults_height', __('Höhe','fau-oembed'), array($this, 'embed_defaults_height'), 'fau_oembed_options', 'embed_default_section');
+        add_settings_field('embed_defaults_width', __('Breite','fau-oembed'), [$this, 'embed_defaults_width'], 'fau_oembed_options', 'embed_default_section');
+        add_settings_field('embed_defaults_height', __('Höhe','fau-oembed'), [$this, 'embed_defaults_height'], 'fau_oembed_options', 'embed_default_section');
 
         add_settings_section('faukarte_section', __('Automatische Einbindung von FAU-Karten','fau-oembed'), '__return_false', 'fau_oembed_options');
-        add_settings_field('faukarte_active', __('Aktivieren','fau-oembed'), array($this, 'faukarte_active'), 'fau_oembed_options', 'faukarte_section');
+        add_settings_field('faukarte_active', __('Aktivieren','fau-oembed'), [$this, 'faukarte_active'], 'fau_oembed_options', 'faukarte_section');
 
-        add_settings_section('videoportal_section', __('Automatische Einbindung des FAU Videoportals','fau-oembed'), '__return_false', 'fau_oembed_options');
-        add_settings_field('videoportal_active', __('Aktivieren','fau-oembed'), array($this, 'videoportal_active'), 'fau_oembed_options', 'videoportal_section');
+        add_settings_section('fau_videoportal_section', __('Automatische Einbindung des FAU Videoportals','fau-oembed'), '__return_false', 'fau_oembed_options');
+        add_settings_field('fau_videoportal_active', __('Aktivieren','fau-oembed'), [$this, 'fau_videoportal_active'], 'fau_oembed_options', 'fau_videoportal_section');
 
-        add_settings_section('youtube_nocookie_section', __('Automatische Einbindung von YouTube-Videos ohne Cookies','fau-oembed'), '__return_false', 'fau_oembed_options');
-        add_settings_field('youtube_nocookie_active', __('Aktivieren','fau-oembed'), array($this, 'youtube_nocookie_active'), 'fau_oembed_options', 'youtube_nocookie_section');
-        add_settings_field('youtube_nocookie_norel', __('Anzeige ähnlicher Videos ausblenden','fau-oembed'), array($this, 'youtube_nocookie_norel'), 'fau_oembed_options', 'youtube_nocookie_section');
+        add_settings_section('youtube_section', __('Automatische Einbindung von YouTube-Videos ohne Cookies','fau-oembed'), '__return_false', 'fau_oembed_options');
+        add_settings_field('youtube_active', __('Aktivieren','fau-oembed'), [$this, 'youtube_active'], 'fau_oembed_options', 'youtube_section');
+        add_settings_field('youtube_norel', __('Anzeige ähnlicher Videos ausblenden','fau-oembed'), [$this, 'youtube_norel'], 'fau_oembed_options', 'youtube_section');
+	
+	add_settings_section('slideshare_section', __('Automatische Einbindung von Slideshare-Präsentationen','fau-oembed'), '__return_false', 'fau_oembed_options');
+        add_settings_field('slideshare_active', __('Aktivieren','fau-oembed'), [$this, 'slideshare_active'], 'fau_oembed_options', 'slideshare_section');
 	
     }
 
@@ -95,62 +99,70 @@ class Settings {
 
     public function embed_defaults_width() {
         ?>
-        <input type='text' name="<?php printf('%s[embed_defaults][width]', self::option_name); ?>" value="<?php echo $this->options->embed_defaults['width']; ?>">
+        <input type='text' name="<?php printf('%s[embed_defaults][width]', $this->option_name); ?>" value="<?php echo $this->options->embed_defaults['width']; ?>">
         <?php
     }
 
     public function embed_defaults_height() {
         ?>
-        <input type='text' name="<?php printf('%s[embed_defaults][height]', self::option_name); ?>" value="<?php echo $this->options->embed_defaults['height']; ?>">
+        <input type='text' name="<?php printf('%s[embed_defaults][height]', $this->option_name); ?>" value="<?php echo $this->options->embed_defaults['height']; ?>">
         <?php
     }
 
     public function faukarte_active() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[faukarte][active]', self::option_name); ?>" <?php checked($this->options->faukarte['active'], true); ?>>                   
+        <input type='checkbox' name="<?php printf('%s[faukarte][active]', $this->option_name); ?>" <?php checked($this->options->faukarte['active'], true); ?>>                   
         <?php
     }
 
-    public function videoportal_active() {
+    public function fau_videoportal_active() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[fau_videoportal][active]', self::option_name); ?>" <?php checked($this->options->fau_videoportal['active'], true); ?>>
+        <input type='checkbox' name="<?php printf('%s[fau_videoportal][active]', $this->option_name); ?>" <?php checked($this->options->fau_videoportal['active'], true); ?>>
         <?php
     }
 
-    public function youtube_nocookie_active() {
+    public function youtube_active() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[youtube][active]', self::option_name); ?>" <?php checked($this->options->youtube['active'], true); ?>>
+        <input type='checkbox' name="<?php printf('%s[youtube][active]', $this->option_name); ?>" <?php checked($this->options->youtube['active'], true); ?>>
         <?php
     }
 
 
-    public function youtube_nocookie_norel() {
+    public function youtube_norel() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[youtube][norel]', self::option_name); ?>"<?php checked($this->options->youtube['norel'], true); ?>>
+        <input type='checkbox' name="<?php printf('%s[youtube][norel]',$this->option_name); ?>"<?php checked($this->options->youtube['norel'], true); ?>>
         <p class="description"><?php _e('Funktioniert nur, wenn die automatische Einbindung von YouTube-Videos aktiviert ist.','fau-oembed'); ?></p>
         <?php
     }
 
-    
+      public function slideshare_active() {
+        ?>
+        <input type='checkbox' name="<?php printf('%s[slideshare][active]', $this->option_name); ?>" <?php checked($this->options->slideshare['active'], true); ?>>
+        <?php
+    }
+  
     /**
      * Validiert die Eingabe der Einstellungsseite.
      * @param array $input
      * @return array
      */
  public function options_validate($input) {
-        $defaults = $this->default_options();
-        $options = $this->get_options();
 
         $input['embed_defaults']['width'] = (int) $input['embed_defaults']['width'];
         $input['embed_defaults']['height'] = (int) $input['embed_defaults']['height'];
-        $input['embed_defaults']['width'] = !empty($input['embed_defaults']['width']) ? $input['embed_defaults']['width'] : $defaults['embed_defaults']['width'];
-        $input['embed_defaults']['height'] = !empty($input['embed_defaults']['height']) ? $input['embed_defaults']['height'] : $defaults['embed_defaults']['height'];
+        $input['embed_defaults']['width'] = !empty($input['embed_defaults']['width']) ? $input['embed_defaults']['width'] : $this->options->embed_defaults['width'];
+        $input['embed_defaults']['height'] = !empty($input['embed_defaults']['height']) ? $input['embed_defaults']['height'] : $this->options->embed_defaults['height'];
 
         $input['faukarte']['active'] = isset($input['faukarte']['active']) ? true : false;
         $input['fau_videoportal']['active'] = isset($input['fau_videoportal']['active']) ? true : false;
 
-        $input['youtube']['active'] = isset($input['youtube_nocookie']['active']) ? true : false;
-        $input['youtube']['norel'] = isset($input['youtube_nocookie']['norel']) ? 1 : 0;
+        $input['youtube']['active'] = isset($input['youtube']['active']) ? true : false;
+        $input['youtube']['norel'] = isset($input['youtube']['norel']) ? 1 : 0;
+	
+	$input['slideshare']['active'] = isset($input['slideshare']['active']) ? true : false;
+	
+	
+	
         return $input;
     }
    

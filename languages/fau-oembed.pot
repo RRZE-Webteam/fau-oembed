@@ -3,112 +3,223 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FAU oEmbed\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-10 11:35+0100\n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: RRZE-Webteam\n"
-"Language: de\n"
+"POT-Creation-Date: 2019-02-28 14:44+0000\n"
+"PO-Revision-Date: 2019-02-28 14:44+0000\n"
+"Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_nx:4c,1,2;_x:1,2c\n"
-"X-Poedit-Basepath: .\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.0.4\n"
-"X-Poedit-SearchPath-0: ..\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.0; wp-5.1"
 
-#: ../fau-oembed.php:85
+#: includes/Settings.php:249
+msgid ""
+"<p><strong>Für mehr Information:</strong></p><p><a href=\"http://blogs.fau."
+"de/webworking\">RRZE-Webworking</a></p><p><a href=\"https://github.com/RRZE-"
+"Webteam\">RRZE-Webteam in Github</a></p>"
+msgstr ""
+
+#: includes/Settings.php:82 includes/Settings.php:85 includes/Settings.php:88
+#: includes/Settings.php:92
+msgid "Aktivieren"
+msgstr ""
+
+#: includes/Settings.php:192
+msgid ""
+"Alternativ kann eine Karte von http://karte.fau.de auch über den Shortcode "
+"[faukarte] mit folgenden Parametern eingebunden werden:"
+msgstr ""
+
+#: includes/Settings.php:89
+msgid "Anzeige ähnlicher Videos ausblenden"
+msgstr ""
+
+#: includes/Embeds.php:380
+msgid "auf"
+msgstr ""
+
+#: includes/Settings.php:218
+msgid ""
+"auf Ihrer Blog-Seite das YouTube-Video ohne die Verwendung von Cookies und"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Automatische Einbindung der FAU-Karten, Videos von FAU.tv, YouTube-Videos "
+"ohne Cookies, sowie weitere oEmbed-Quellen der FAU."
+msgstr ""
+
+#: includes/Settings.php:84 includes/Settings.php:203
+msgid "Automatische Einbindung des FAU Videoportals"
+msgstr ""
+
+#: includes/Settings.php:81 includes/Settings.php:182
+msgid "Automatische Einbindung von FAU-Karten"
+msgstr ""
+
+#: includes/Settings.php:91
+msgid "Automatische Einbindung von Slideshare-Präsentationen"
+msgstr ""
+
+#: includes/Settings.php:87 includes/Settings.php:215
+msgid "Automatische Einbindung von YouTube-Videos ohne Cookies"
+msgstr ""
+
+#: includes/Settings.php:198
+msgid ""
+"Beispiel: [faukarte url=\"address/martensstraße 1\" width=\"100%\" "
+"height=\"100px\" zoom=\"12\"]"
+msgstr ""
+
+#: includes/Settings.php:78
+msgid "Breite"
+msgstr ""
+
+#: includes/Settings.php:221
+msgid ""
+"Dabei können Sie die Breite angeben, in der YouTube-Videos auf Ihrer Seite "
+"dargestellt werden."
+msgstr ""
+
+#: includes/Settings.php:183
+msgid ""
+"Die Friedrich-Alexander-Universität Erlangen-Nürnberg bietet die Möglichkeit,"
+" Karten von Standorten universitärer Einrichtungen zu erstellen. Sofern Sie "
+"hier die automatische Einbindung von diesen FAU-Karten aktivieren, wird "
+"Ihnen statt eines Links die Karte in Ihrer Blog-Seite angezeigt."
+msgstr ""
+
+#: includes/Settings.php:191
+msgid "Einbindung von FAU-Karten über Shortcode"
+msgstr ""
+
+#: includes/Settings.php:54
+msgid "Einstellungen &rsaquo; FAU oEmbed"
+msgstr ""
+
+#: includes/Options.php:34
+msgid "Embedding"
+msgstr ""
+
+#: includes/Options.php:39
+msgid "FAU Karte"
+msgstr ""
+
+#. Name of the plugin
+#: includes/Settings.php:43
+msgid "FAU oEmbed"
+msgstr ""
+
+#: includes/Settings.php:239
+msgid "FAU Videoportal"
+msgstr ""
+
+#: includes/Settings.php:233
+msgid "FAU-Karte"
+msgstr ""
+
+#: includes/Embeds.php:340
+msgid "Folien"
+msgstr ""
+
+#: includes/Settings.php:134
+msgid ""
+"Funktioniert nur, wenn die automatische Einbindung von YouTube-Videos "
+"aktiviert ist."
+msgstr ""
+
+#: includes/Settings.php:210
+msgid "Fügen Sie die kopierte Adresse auf Ihrer Seite ein."
+msgstr ""
+
+#: includes/Settings.php:187
+msgid ""
+"Geben Sie den Standort der FAU an, den Sie in Ihrer Karte anzeigen möchten."
+msgstr ""
+
+#: includes/Settings.php:207
 #, php-format
-msgid ""
-"Ihre PHP-Version %s ist veraltet. Bitte aktualisieren Sie mindestens auf die "
-"PHP-Version %s."
+msgid "Gehen Sie auf das %s."
 msgstr ""
 
-#: ../fau-oembed.php:89
+#: includes/Settings.php:186
 #, php-format
+msgid "Gehen Sie auf den %s."
+msgstr ""
+
+#: includes/Settings.php:196
 msgid ""
-"Ihre Wordpress-Version %s ist veraltet. Bitte aktualisieren Sie mindestens "
-"auf die Wordpress-Version %s."
+"height: Höhe des anzuzeigenden Kartenausschnitts (auch %-Angaben sind "
+"erlaubt)."
 msgstr ""
 
-#: ../fau-oembed.php:149
-msgid "oEmbed"
-msgstr ""
-
-#: ../fau-oembed.php:156
-msgid ""
-"WordPress bindet Videos, Bilder und andere Inhalte einiger Provider "
-"automatisch in Ihre Blog-Seiten ein, sobald Sie den Link auf die "
-"entsprechende Datei angeben. Unterstützt werden hierbei z.B. Daten von "
-"YouTube, Twitter und Flickr."
-msgstr ""
-
-#: ../fau-oembed.php:157 ../fau-oembed.php:267
-msgid "Standardwerte für eingebettete Objekte"
-msgstr ""
-
-#: ../fau-oembed.php:158
+#: includes/Settings.php:177
 msgid ""
 "Hier können Sie einstellen, in welcher Größe die Inhalte automatisch "
 "eingebunden werden. Bei Objekten, bei denen das Seitenverhältnis fest "
 "vorgegeben ist (z.B. Videos), wird hierbei auf die kleinste Größe beschränkt."
 msgstr ""
 
-#: ../fau-oembed.php:159
-msgid ""
-"Sofern Sie die automatische Einbindung von YouTube-Videos ohne Cookies "
-"aktiviert haben, werden diese in der hierbei festgelegten Größe angezeigt."
+#. Author URI of the plugin
+msgid "https://blogs.fau.de/webworking/"
 msgstr ""
 
-#: ../fau-oembed.php:163 ../fau-oembed.php:272
-msgid "Automatische Einbindung von FAU-Karten"
+#. URI of the plugin
+msgid "https://github.com/RRZE-Webteam/fau-oembed"
 msgstr ""
 
-#: ../fau-oembed.php:164
-msgid ""
-"Die Friedrich-Alexander-Universität Erlangen-Nürnberg bietet die "
-"Möglichkeit, Karten von Standorten universitärer Einrichtungen zu erstellen. "
-"Sofern Sie hier die automatische Einbindung von diesen FAU-Karten "
-"aktivieren, wird Ihnen statt eines Links die Karte in Ihrer Blog-Seite "
-"angezeigt."
+#: includes/Settings.php:79
+msgid "Höhe"
 msgstr ""
 
-#: ../fau-oembed.php:165
-msgid "So erstellen Sie Ihre FAU-Karte:"
+#: includes/Options.php:46 includes/Options.php:53 includes/Options.php:59
+msgid "Keine Beschreibung verfügbar."
 msgstr ""
 
-#: ../fau-oembed.php:167
-#, php-format
-msgid "Gehen Sie auf den %s."
-msgstr ""
-
-#: ../fau-oembed.php:168
-msgid ""
-"Geben Sie den Standort der FAU an, den Sie in Ihrer Karte anzeigen möchten."
-msgstr ""
-
-#: ../fau-oembed.php:169
+#: includes/Settings.php:188
 msgid "Klicken Sie auf <i>Abschicken</i>."
 msgstr ""
 
-#: ../fau-oembed.php:170
+#: includes/Settings.php:189
 msgid ""
 "Kopieren Sie den angezeigten direkten Link zum iFrame und geben Sie diesen "
 "auf Ihrer Blog-Seite an."
 msgstr ""
 
-#: ../fau-oembed.php:172
-msgid "Einbindung von FAU-Karten über Shortcode"
+#: includes/Settings.php:209
+msgid "Kopieren Sie die Adresse des <i>Anschauen</i>-Links des Videos."
 msgstr ""
 
-#: ../fau-oembed.php:173
+#: includes/Embeds.php:165 includes/Embeds.php:272
+msgid "Quelle:"
+msgstr ""
+
+#. Author of the plugin
+msgid "RRZE-Webteam"
+msgstr ""
+
+#: includes/Settings.php:205
+msgid "So binden Sie einen Clip des Videoportals ein:"
+msgstr ""
+
+#: includes/Settings.php:184
+msgid "So erstellen Sie Ihre FAU-Karte:"
+msgstr ""
+
+#: includes/Settings.php:178
 msgid ""
-"Alternativ kann eine Karte von http://karte.fau.de auch über den Shortcode "
-"[faukarte] mit folgenden Parametern eingebunden werden:"
+"Sofern Sie die automatische Einbindung von YouTube-Videos ohne Cookies "
+"aktiviert haben, werden diese in der hierbei festgelegten Größe angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:175
+#: includes/Settings.php:76 includes/Settings.php:176
+msgid "Standardwerte für eingebettete Objekte"
+msgstr ""
+
+#: includes/Settings.php:194
 #, php-format
 msgid ""
 "url: Adresse des anzuzeigenden Kartenausschnitts, ohne vorangestelltes %1$s. "
@@ -116,66 +227,28 @@ msgid ""
 "vorangestelltes %2$s verwenden."
 msgstr ""
 
-#: ../fau-oembed.php:176
+#: includes/Embeds.php:238
+msgid "Video"
+msgstr ""
+
+#: includes/Embeds.php:241 includes/Embeds.php:343 includes/Embeds.php:384
+msgid "von"
+msgstr ""
+
+#: includes/Settings.php:222
 msgid ""
-"width: Breite des anzuzeigenden Kartenausschnitts (auch %-Angaben sind "
-"erlaubt)."
+"Wenn Sie die Option <i>Anzeige ähnlicher Videos ausblenden</i> aktivieren, "
+"werden Ihnen am Ende Ihres Videos keine ähnlichen Videos als Vorschau "
+"angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:177
-msgid ""
-"height: Höhe des anzuzeigenden Kartenausschnitts (auch %-Angaben sind "
-"erlaubt)."
-msgstr ""
-
-#: ../fau-oembed.php:178
-msgid ""
-"zoom: Zoomfaktor für den anzuzeigenden Kartenausschnitt (Wert zwischen 1 und "
-"19, je größer der Wert desto größer die Darstellung)."
-msgstr ""
-
-#: ../fau-oembed.php:179
-msgid ""
-"Beispiel: [faukarte url=\"address/martensstraße 1\" width=\"100%\" height="
-"\"100px\" zoom=\"12\"]"
-msgstr ""
-
-#: ../fau-oembed.php:184 ../fau-oembed.php:275
-msgid "Automatische Einbindung des FAU Videoportals"
-msgstr ""
-
-#: ../fau-oembed.php:185
+#: includes/Settings.php:204
 msgid ""
 "Wenn Sie hier die automatische Einbindung des FAU Videoportals aktivieren, "
 "wird Ihnen statt des Links der Clip in Ihrer Blog-Seite angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:186
-msgid "So binden Sie einen Clip des Videoportals ein:"
-msgstr ""
-
-#: ../fau-oembed.php:188
-#, php-format
-msgid "Gehen Sie auf das %s."
-msgstr ""
-
-#: ../fau-oembed.php:189
-msgid "Wählen Sie das Video aus, das Sie in Ihrem Blog anzeigen möchten."
-msgstr ""
-
-#: ../fau-oembed.php:190
-msgid "Kopieren Sie die Adresse des <i>Anschauen</i>-Links des Videos."
-msgstr ""
-
-#: ../fau-oembed.php:191
-msgid "Fügen Sie die kopierte Adresse auf Ihrer Seite ein."
-msgstr ""
-
-#: ../fau-oembed.php:196 ../fau-oembed.php:278
-msgid "Automatische Einbindung von YouTube-Videos ohne Cookies"
-msgstr ""
-
-#: ../fau-oembed.php:197
+#: includes/Settings.php:216
 #, php-format
 msgid ""
 "Wenn Sie hier die automatische Einbindung von YouTube-Videos ohne Cookies "
@@ -183,77 +256,52 @@ msgid ""
 "Seite %s"
 msgstr ""
 
-#: ../fau-oembed.php:199
+#: includes/Settings.php:195
 msgid ""
-"auf Ihrer Blog-Seite das YouTube-Video ohne die Verwendung von Cookies und"
+"width: Breite des anzuzeigenden Kartenausschnitts (auch %-Angaben sind "
+"erlaubt)."
 msgstr ""
 
-#: ../fau-oembed.php:200
-msgid "zusätzlich noch der Link zu dem Video auf YouTube angezeigt."
-msgstr ""
-
-#: ../fau-oembed.php:202
+#: includes/Settings.php:175
 msgid ""
-"Dabei können Sie die Breite angeben, in der YouTube-Videos auf Ihrer Seite "
-"dargestellt werden."
+"WordPress bindet Videos, Bilder und andere Inhalte einiger Provider "
+"automatisch in Ihre Blog-Seiten ein, sobald Sie den Link auf die "
+"entsprechende Datei angeben. Unterstützt werden hierbei z.B. Daten von "
+"YouTube, Twitter und Flickr."
 msgstr ""
 
-#: ../fau-oembed.php:203
+#: includes/Settings.php:208
+msgid "Wählen Sie das Video aus, das Sie in Ihrem Blog anzeigen möchten."
+msgstr ""
+
+#: fau-oembed.php:94
+#, php-format
 msgid ""
-"Wenn Sie die Option <i>Anzeige ähnlicher Videos ausblenden</i> aktivieren, "
-"werden Ihnen am Ende Ihres Videos keine ähnlichen Videos als Vorschau "
-"angezeigt."
+"Your server is running PHP version %1$s. Please upgrade at least to PHP "
+"version %2$s."
 msgstr ""
 
-#: ../fau-oembed.php:208
-msgid "Übersicht"
+#: fau-oembed.php:99
+#, php-format
+msgid ""
+"Your Wordpress version is %1$s. Please upgrade at least to Wordpress version "
+"%2$s."
 msgstr ""
 
-#: ../fau-oembed.php:214
-msgid "FAU-Karte"
-msgstr ""
-
-#: ../fau-oembed.php:220
-msgid "FAU Videoportal"
-msgstr ""
-
-#: ../fau-oembed.php:226
+#: includes/Settings.php:245
 msgid "YouTube ohne Cookies"
 msgstr ""
 
-#: ../fau-oembed.php:230
+#: includes/Settings.php:197
 msgid ""
-"<p><strong>Für mehr Information:</strong></p><p><a href=\"http://blogs.fau."
-"de/webworking\">RRZE-Webworking</a></p><p><a href=\"https://github.com/RRZE-"
-"Webteam\">RRZE-Webteam in Github</a></p>"
+"zoom: Zoomfaktor für den anzuzeigenden Kartenausschnitt (Wert zwischen 1 und "
+"19, je größer der Wert desto größer die Darstellung)."
 msgstr ""
 
-#: ../fau-oembed.php:250
-msgid "Einstellungen &rsaquo; oEmbed"
+#: includes/Settings.php:219
+msgid "zusätzlich noch der Link zu dem Video auf YouTube angezeigt."
 msgstr ""
 
-#: ../fau-oembed.php:269 ../fau-oembed.php:280
-msgid "Breite"
-msgstr ""
-
-#: ../fau-oembed.php:270
-msgid "Höhe"
-msgstr ""
-
-#: ../fau-oembed.php:273 ../fau-oembed.php:276 ../fau-oembed.php:279
-msgid "Aktivieren"
-msgstr ""
-
-#: ../fau-oembed.php:281
-msgid "Anzeige ähnlicher Videos ausblenden"
-msgstr ""
-
-#: ../fau-oembed.php:323
-msgid "Zu empfehlen ist eine Breite von mindestens 350px."
-msgstr ""
-
-#: ../fau-oembed.php:331
-msgid ""
-"Funktioniert nur, wenn die automatische Einbindung von YouTube-Videos "
-"aktiviert ist."
+#: includes/Settings.php:227
+msgid "Übersicht"
 msgstr ""

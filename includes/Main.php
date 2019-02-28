@@ -16,28 +16,33 @@ use FAU\OEmbed\Settings;
 defined('ABSPATH') || exit;
 
 class Main {
-    /**
-     * Main-Klasse wird instanziiert.
-     */
+
     public function __construct()  {
 	add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
-
+	add_filter('embed_oembed_html', [$this, 'fau_oembed_wrap_oembed_div'], 10, 3);
 	new Settings();
 	new Embeds();
 	new Shortcode();
-	
     }
 
-    /**
-     * Enqueue der globale Skripte.
-     */
-
+    /*-----------------------------------------------------------------------------------*/
+    /* Enqueue der globale Skripte.
+    /*-----------------------------------------------------------------------------------*/
     public function register_scripts() {
         wp_register_style('fau-oembed-style', plugins_url('assets/css/fau-oembed.css', plugin_basename(RRZE_PLUGIN_FILE)));
       //  wp_register_script('fau-oembed-scripts', plugins_url('assets/js/fau-oembed.min.js', plugin_basename(RRZE_PLUGIN_FILE)));
     }    
     
     
+    
+    /*-----------------------------------------------------------------------------------*/
+    /* Surround embeddings with div class
+    /*-----------------------------------------------------------------------------------*/
+    public function fau_oembed_wrap_oembed_div($html, $url, $attr) {
+	    return '<div class="oembed">'.$html.'</div>';
+    }
+    
+
     /*
      * Only for debugging, remove on stable
      */
@@ -48,5 +53,5 @@ class Main {
 	ob_end_clean();
 	return "<pre>".$content."</pre>";
     }
-    
+
 }

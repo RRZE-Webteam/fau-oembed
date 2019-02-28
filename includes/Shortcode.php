@@ -32,8 +32,8 @@ class Shortcode {
         extract($atts);
         
 	$title = ! empty( sanitize_title($atts['title']) ) ? sanitize_title($atts['title']) : $this->options->faukarte['title'];
-	$width = ! empty( intval($atts['width'])) ? intval($atts['width']) : $this->options->faukarte['width'];
-	$height = ! empty( intval($atts['height'])) ? intval($atts['height']) : $this->options->faukarte['height'];
+	$width = ! empty( intval($atts['width'])) ? intval($atts['width']) : $this->options->embed_defaults['width'];
+	$height = ! empty( intval($atts['height'])) ? intval($atts['height']) : $this->options->embed_defaults['height'];
 	
 	
         if (is_feed()) {
@@ -65,12 +65,12 @@ class Shortcode {
 	$output .= '<iframe title="'.$title.'" src="'.$url.'"';
 	
 	if (!empty( $atts['width'] )) {
-	    $output .= ' class="fau-karte" width="'.$width.'" height="'.$height.'"';
+	    $output .= ' class="fau-karte"';
 	} else {
 	    $output .= ' class="fau-karte defaultwidth"';
 	}
 	
-	$output .= ' seamless></iframe>';
+	$output .= ' width="'.$width.'" height="'.$height.'" seamless></iframe>';
 	$output .= '</div>';
         
 	return $output;
