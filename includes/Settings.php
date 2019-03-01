@@ -211,7 +211,7 @@ class Settings {
             '</ol>'
         );
 
-        $content_youtube_nocookie = array(
+        $content_youtube = array(
             '<p><strong>' . __('Automatische Einbindung von YouTube-Videos ohne Cookies','fau-oembed') . '</strong></p>',
             '<p>' . sprintf(__('Wenn Sie hier die automatische Einbindung von YouTube-Videos ohne Cookies aktivieren, wird Ihnen bei der Angabe eines Links zu einem Video von der Seite %s','fau-oembed'), '<a href="http://www.youtube.de/" target="_blank">YouTube</a>') . '</p>',
             '<ol>',
@@ -240,24 +240,24 @@ class Settings {
             'content' => implode(PHP_EOL, $content_fauvideo),
         );
 
-        $help_tab_youtube_nocookie = array(
-            'id' => 'youtube_nocookie',
+        $help_tab_youtube = array(
+            'id' => 'youtube',
             'title' => __('YouTube ohne Cookies','fau-oembed'),
-            'content' => implode(PHP_EOL, $content_youtube_nocookie),
+            'content' => implode(PHP_EOL, $content_youtube),
         );
 
         $help_sidebar = __('<p><strong>Für mehr Information:</strong></p><p><a href="http://blogs.fau.de/webworking">RRZE-Webworking</a></p><p><a href="https://github.com/RRZE-Webteam">RRZE-Webteam in Github</a></p>','fau-oembed');
 
         $screen = get_current_screen();
 
-        if ($screen->id != $this->oembed_option_page) {
+        if ($screen->id !=  $this->admin_settings_page) {
             return;
         }
 
         $screen->add_help_tab($help_tab_overview);
         $screen->add_help_tab($help_tab_faukarte);
         $screen->add_help_tab($help_tab_fauvideo);
-        $screen->add_help_tab($help_tab_youtube_nocookie);
+        $screen->add_help_tab($help_tab_youtube);
 
         $screen->set_help_sidebar($help_sidebar);
     }
