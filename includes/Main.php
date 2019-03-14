@@ -19,7 +19,7 @@ class Main {
 
     public function __construct()  {
 	add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
-	add_filter('embed_oembed_html', [$this, 'fau_oembed_wrap_oembed_div'], 10, 3);
+	// add_filter('embed_oembed_html', [$this, 'fau_oembed_wrap_oembed_div'], 10, 3);
 	new Settings();
 	new Embeds();
 	new Shortcode();

@@ -410,6 +410,11 @@ class Embeds {
 	// oEmbed Schnittstelle von FAU Mac Support
 	// Ansprechpartner: Gregor Longariva <gregor.longariva@fau.de>
         wp_oembed_add_provider('https://faumac.rrze.fau.de/oembed/*', 'https://faumac.rrze.fau.de/oembed/');
+	
+	// oEmbed Schnittstelle für die EInbindung im Rahmen der 100 Jahre WISO
+	// Ansprechpartner: Jalowski, Max <max.jalowski@fau.de> 
+	wp_oembed_add_provider('https://100jahre.wi1projects.de', 'https://100jahre.wi1projects.de/oembed');
+	
     }
    
 
