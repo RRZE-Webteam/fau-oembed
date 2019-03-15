@@ -17,9 +17,7 @@ class Shortcode {
     
     public function shortcode_faukarte($atts) {
         //  http://karte.fau.de/#14/49.4332/11.0977 wird zu http://karte.fau.de/api/v1/iframe/zoom/14/center/49.4332,11.0977
-	
-	$title = ! empty( $video['title'] ) ? $video['title'] : $this->options->embed_defaults['title'];
-	
+		
         $default = array(
             'url' => 'https://karte.fau.de/api/v1/iframe/',
             'width' => '',
@@ -30,8 +28,10 @@ class Shortcode {
         
         $atts = shortcode_atts($default, $atts);
         extract($atts);
-        
-	$title = ! empty( sanitize_title($atts['title']) ) ? sanitize_title($atts['title']) : $this->options->faukarte['title'];
+	 
+         if (! empty( $atts['title'] )) {
+	    $title = ! empty( sanitize_title($atts['title']) ) ? sanitize_title($atts['title']) : $this->options->faukarte['title'];
+	}
 	$width = ! empty( intval($atts['width'])) ? intval($atts['width']) : $this->options->embed_defaults['width'];
 	$height = ! empty( intval($atts['height'])) ? intval($atts['height']) : $this->options->embed_defaults['height'];
 	

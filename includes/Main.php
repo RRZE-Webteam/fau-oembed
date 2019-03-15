@@ -21,8 +21,13 @@ class Main {
 	add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
 	// add_filter('embed_oembed_html', [$this, 'fau_oembed_wrap_oembed_div'], 10, 3);
 	new Settings();
+	    // Settings of Plugin
 	new Embeds();
+	    // New Embdes and Changes to StandardEmbdes
 	new Shortcode();
+	    // Shortcodes
+	new SemiEmbeds();
+	    // Embdes, that feel and work like embeds for the author, but dont use oEmbed-API
     }
 
     /*-----------------------------------------------------------------------------------*/
@@ -46,7 +51,7 @@ class Main {
     /*
      * Only for debugging, remove on stable
      */
-    public function var_dump_ret($mixed = null) {
+    public  function var_dump_ret($mixed = null) {
 	ob_start();
 	var_dump($mixed);
 	$content = ob_get_contents();
