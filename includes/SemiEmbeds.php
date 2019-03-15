@@ -41,8 +41,8 @@ class SemiEmbeds {
             $url = str_replace('http://', $protokoll, $url);
          }
 	 
-	$embed = '';
-	
+
+	$embed = '<div class="fau-oembed univis-job oembed">';
 	
 	$request = wp_safe_remote_get($url );
 
@@ -111,7 +111,7 @@ class SemiEmbeds {
 	}
 	$embed .= $poscontent;
 	// $embed .= $univishtmlpage;
-
+	$embed .= "</div>";
 	
 	
 	wp_enqueue_style('fau-oembed-style');
