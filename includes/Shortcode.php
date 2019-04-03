@@ -32,8 +32,8 @@ class Shortcode {
         extract($atts);
         
 	$title = ! empty( sanitize_title($atts['title']) ) ? sanitize_title($atts['title']) : $this->options->faukarte['title'];
-	$width = ! empty( intval($atts['width'])) ? intval($atts['width']) : $this->options->embed_defaults['width'];
-	$height = ! empty( intval($atts['height'])) ? intval($atts['height']) : $this->options->embed_defaults['height'];
+    $width = $this->sanitizeCSSWidth($atts['width'], $this->options->embed_defaults['width']);
+    $height = $this->sanitizeCSSHeight($atts['height'], $this->options->embed_defaults['height']);
 	
 	
         if (is_feed()) {
@@ -76,5 +76,50 @@ class Shortcode {
 	return $output;
     }
     
+    /**
+     * Sanitizes CSS width string
+     * @param  string $value   Width att from shortcode
+     * @param  string $default Default width
+     * @return string          Sanitized width
+     */
+    protected function sanitizeCSSWidth($value, $default)
+    {
+        return $this->sanitizeCSSHeight($value, $default);
+    }
+
+    /**
+     * Sanitizes CSS height string
+     * @param  string $value   Height att from shortcode
+     * @param  string $default Default height
+     * @return string          Sanitized height
+     */
+    protected function sanitizeCSSHeight($value, $default)
+    {
+        $defaultValue = '300';
+        $defaultUnit = 'px';
+        $pattern = '/^(\d+)(px|%)?$/';
+
+        $default = preg_replace('/\s+/', '', $default);
+        preg_match($pattern, $default, $match);
+        if (empty($match)) {
+            $default = $defaultValue . $defaultUnit;
+        } elseif (! isset($match[2])) {
+            $default = absint($match[1]) . $defaultUnit;
+        } else {
+            $default = absint($match[1]) . $match[2];
+        }
+
+        $value = preg_replace('/\s+/', '', $value);
+        preg_match($pattern, $value, $match);
+        if (empty($match)) {
+            $value = $default;
+        } elseif (! isset($match[2])) {
+            $value = absint($match[1]) . $defaultUnit;
+        } else {
+            $value = absint($match[1]) . $match[2];
+        }
+
+        return $value;
+    }
     
 }
