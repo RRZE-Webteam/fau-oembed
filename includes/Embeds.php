@@ -311,27 +311,25 @@ class Embeds {
             $relvideo = '?rel=0';
         }
        
-	$embed = '<div class="fau-oembed oembed">';
+        $embed = '<div class="fau-oembed oembed">';
 
-	$id = $matches[1]."-".uniqid();
-	// we use a uniq id here, cause of the case, that the same video could be 
-	// displayed more as one time in the same website. this would then make an error,
-	// cause id's habe to be uniq.
+        $id = $matches[1]."-".uniqid();
+        // we use a uniq id here, cause of the case, that the same video could be 
+        // displayed more as one time in the same website. this would then make an error,
+        // cause id's habe to be uniq.
 
-    $embed .= '<p class="elastic-video">';	
-	if ($this->options->brmediathek['display_title']) {
-	    $embed .= '<iframe class="brmediathek defaultwidth" aria-labelledby="'.$id.'"';
-	} else {
-	    $embed .= '<iframe class="brmediathek defaultwidth" title="'.$title.'"';
-	}
+        $embed .= '<div class="elastic-video">';	
+        if ($this->options->brmediathek['display_title']) {
+            $embed .= '<iframe class="brmediathek defaultwidth" aria-labelledby="'.$id.'"';
+        } else {
+            $embed .= '<iframe class="brmediathek defaultwidth" title="'.$title.'"';
+        }
 	
-	$embed .= ' src="https://www.br.de/mediathek/embed/'.esc_attr($matches[1]).$relvideo.'" width="'.$width.'" height="'.$height.'"></iframe>';
-    $embed .= '</p>';	
-	$embed .= '</div>';
+        $embed .= ' src="https://www.br.de/mediathek/embed/'.esc_attr($matches[1]).$relvideo.'" width="'.$width.'" height="'.$height.'"></iframe>';
+        $embed .= '</div>';	
+        $embed .= '</div>';
 	
-	
-	
-	wp_enqueue_style('fau-oembed-style');
+        wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_brmediathek', $embed, $matches, $attr, $url, $rawattr);
     }
     
