@@ -18,6 +18,7 @@ class Embeds {
          add_action('init', [$this, 'youtube_nocookie']);
          add_action('init', [$this, 'oembed_add_providers']);
 	add_action('init', [$this, 'slideshare']);
+	add_action('init', [$this, 'brmediathek']);
 	
     }
 
@@ -282,6 +283,54 @@ class Embeds {
 	
 	wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
+    }
+    
+
+    /*-----------------------------------------------------------------------------------*/
+    /*  BR
+    /*-----------------------------------------------------------------------------------*/    
+    public function brmediathek() {
+        if ($this->options->brmediathek['active'] == true) {
+            wp_oembed_remove_provider('#https?://(www\.)?br\.de/*#i');
+            // https://www.br.de/mediathek/video/abitur-und-dann-mit-profis-an-der-zukunft-basteln-av:584f8d2b3b46790011a26a9b
+            wp_embed_register_handler('brmediathek', '#https?://www\.br\.de/mediathek/video/([a-z0-9\-_:]+)#i', array($this, 'wp_embed_handler_brmediathek'));
+        }
+    }
+
+    public function wp_embed_handler_brmediathek($matches, $attr, $url, $rawattr) {
+        if (is_feed()) {
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                return sprintf('<a href="%1$s">%1$s</a>', $url);
+            } else {
+                return '';
+            }
+        }
+       
+        $relvideo = '';
+        if ($this->options->brmediathek['norel'] == 1) {
+            $relvideo = '?rel=0';
+        }
+       
+        $embed = '<div class="fau-oembed oembed">';
+
+        $id = $matches[1]."-".uniqid();
+        // we use a uniq id here, cause of the case, that the same video could be 
+        // displayed more as one time in the same website. this would then make an error,
+        // cause id's habe to be uniq.
+
+        $embed .= '<div class="elastic-video">';	
+        if ($this->options->brmediathek['display_title']) {
+            $embed .= '<iframe class="brmediathek defaultwidth" aria-labelledby="'.$id.'"';
+        } else {
+            $embed .= '<iframe class="brmediathek defaultwidth" title="'.$title.'"';
+        }
+	
+        $embed .= ' src="https://www.br.de/mediathek/embed/'.esc_attr($matches[1]).$relvideo.'" width="'.$width.'" height="'.$height.'"></iframe>';
+        $embed .= '</div>';	
+        $embed .= '</div>';
+	
+        wp_enqueue_style('fau-oembed-style');
+        return apply_filters('embed_brmediathek', $embed, $matches, $attr, $url, $rawattr);
     }
     
     

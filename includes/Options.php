@@ -58,6 +58,12 @@ class Options {
 		'display_source'	=> true,
 		'description'	=> __('Keine Beschreibung verfügbar.','fau-oembed')
             ),
+	    'brmediathek' => array(
+		'active' => true,
+		'display_title'	    => false,
+		'display_source'	=> false,
+		'description'	=> __('Keine Beschreibung verfügbar.','fau-oembed')
+            ),
 	  
 	    
 	];

@@ -91,6 +91,9 @@ class Settings {
 	add_settings_section('slideshare_section', __('Automatische Einbindung von Slideshare-Präsentationen','fau-oembed'), '__return_false', 'fau_oembed_options');
         add_settings_field('slideshare_active', __('Aktivieren','fau-oembed'), [$this, 'slideshare_active'], 'fau_oembed_options', 'slideshare_section');
 	
+	add_settings_section('brmediathek_section', __('Automatische Einbindung von Videos aus der BR-Mediathek','fau-oembed'), '__return_false', 'fau_oembed_options');
+        add_settings_field('brmediathek_active', __('Aktivieren','fau-oembed'), [$this, 'brmediathek_active'], 'fau_oembed_options', 'brmediathek_section');
+	
     }
 
     
@@ -140,6 +143,11 @@ class Settings {
         <input type='checkbox' name="<?php printf('%s[slideshare][active]', $this->option_name); ?>" <?php checked($this->options->slideshare['active'], true); ?>>
         <?php
     }
+      public function brmediathek_active() {
+        ?>
+        <input type='checkbox' name="<?php printf('%s[brmediathek][active]', $this->option_name); ?>" <?php checked($this->options->brmediathek['active'], true); ?>>
+        <?php
+    }
   
     /**
      * Validiert die Eingabe der Einstellungsseite.
@@ -160,6 +168,8 @@ class Settings {
         $input['youtube']['norel'] = isset($input['youtube']['norel']) ? 1 : 0;
 	
 	$input['slideshare']['active'] = isset($input['slideshare']['active']) ? true : false;
+
+	$input['brmediathek']['active'] = isset($input['brmediathek']['active']) ? true : false;
 	
 	
 	
