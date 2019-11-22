@@ -21,7 +21,7 @@ defined('ABSPATH') || exit;
      */
     public static function get_data( $url, $width = null, $height = null ) {
 	if ( function_exists('_wp_oembed_get_object') ) {
-		require_once( ABSPATH . WPINC . '/class-oembed.php' );
+		require_once( ABSPATH . WPINC . '/class-wp-oembed.php' );
 	}
 	
 	$args = array();
