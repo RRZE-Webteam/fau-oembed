@@ -29,8 +29,8 @@ class Settings {
      * Settings-Klasse wird instanziiert.
      */
     public function __construct() {
-        $this->option_name = Options::get_option_name();
-        $this->options = Options::get_options();
+        $this->option_name = Options::getOptionName();
+        $this->options = Options::getOptions();
 
         add_action('admin_menu', [$this, 'admin_settings_page']);
         add_action('admin_init', [$this, 'admin_settings']);
@@ -102,50 +102,50 @@ class Settings {
 
     public function embed_defaults_width() {
         ?>
-        <input type='text' name="<?php printf('%s[embed_defaults][width]', $this->option_name); ?>" value="<?php echo $this->options->embed_defaults['width']; ?>">
+        <input type='text' name="<?php printf('%s[embed_defaults][width]', $this->option_name); ?>" value="<?php echo $this->options->embed_defaults->width; ?>">
         <?php
     }
 
     public function embed_defaults_height() {
         ?>
-        <input type='text' name="<?php printf('%s[embed_defaults][height]', $this->option_name); ?>" value="<?php echo $this->options->embed_defaults['height']; ?>">
+        <input type='text' name="<?php printf('%s[embed_defaults][height]', $this->option_name); ?>" value="<?php echo $this->options->embed_defaults->height; ?>">
         <?php
     }
 
     public function faukarte_active() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[faukarte][active]', $this->option_name); ?>" <?php checked($this->options->faukarte['active'], true); ?>>                   
+        <input type='checkbox' name="<?php printf('%s[faukarte][active]', $this->option_name); ?>" <?php checked($this->options->faukarte->active, true); ?>>                   
         <?php
     }
 
     public function fau_videoportal_active() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[fau_videoportal][active]', $this->option_name); ?>" <?php checked($this->options->fau_videoportal['active'], true); ?>>
+        <input type='checkbox' name="<?php printf('%s[fau_videoportal][active]', $this->option_name); ?>" <?php checked($this->options->fau_videoportal->active, true); ?>>
         <?php
     }
 
     public function youtube_active() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[youtube][active]', $this->option_name); ?>" <?php checked($this->options->youtube['active'], true); ?>>
+        <input type='checkbox' name="<?php printf('%s[youtube][active]', $this->option_name); ?>" <?php checked($this->options->youtube->active, true); ?>>
         <?php
     }
 
 
     public function youtube_norel() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[youtube][norel]',$this->option_name); ?>"<?php checked($this->options->youtube['norel'], true); ?>>
+        <input type='checkbox' name="<?php printf('%s[youtube][norel]',$this->option_name); ?>"<?php checked($this->options->youtube->norel, true); ?>>
         <p class="description"><?php _e('Funktioniert nur, wenn die automatische Einbindung von YouTube-Videos aktiviert ist.','fau-oembed'); ?></p>
         <?php
     }
 
       public function slideshare_active() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[slideshare][active]', $this->option_name); ?>" <?php checked($this->options->slideshare['active'], true); ?>>
+        <input type='checkbox' name="<?php printf('%s[slideshare][active]', $this->option_name); ?>" <?php checked($this->options->slideshare->active, true); ?>>
         <?php
     }
       public function brmediathek_active() {
         ?>
-        <input type='checkbox' name="<?php printf('%s[brmediathek][active]', $this->option_name); ?>" <?php checked($this->options->brmediathek['active'], true); ?>>
+        <input type='checkbox' name="<?php printf('%s[brmediathek][active]', $this->option_name); ?>" <?php checked($this->options->brmediathek->active, true); ?>>
         <?php
     }
   
@@ -158,8 +158,8 @@ class Settings {
 
         $input['embed_defaults']['width'] = (int) $input['embed_defaults']['width'];
         $input['embed_defaults']['height'] = (int) $input['embed_defaults']['height'];
-        $input['embed_defaults']['width'] = !empty($input['embed_defaults']['width']) ? $input['embed_defaults']['width'] : $this->options->embed_defaults['width'];
-        $input['embed_defaults']['height'] = !empty($input['embed_defaults']['height']) ? $input['embed_defaults']['height'] : $this->options->embed_defaults['height'];
+        $input['embed_defaults']['width'] = !empty($input['embed_defaults']['width']) ? $input['embed_defaults']['width'] : $this->options->embed_defaults->width;
+        $input['embed_defaults']['height'] = !empty($input['embed_defaults']['height']) ? $input['embed_defaults']['height'] : $this->options->embed_defaults->height;
 
         $input['faukarte']['active'] = isset($input['faukarte']['active']) ? true : false;
         $input['fau_videoportal']['active'] = isset($input['fau_videoportal']['active']) ? true : false;

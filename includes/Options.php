@@ -7,16 +7,16 @@ defined('ABSPATH') || exit;
 class Options
 {
     /**
-     * Optionsname
+     * Option name
      * @var string
      */
-    protected static $option_name = 'fau_oembed';
+    protected static $optionName = 'fau_oembed';
 
     /**
-     * Standard Einstellungen werden definiert
+     * Default options
      * @return array
      */
-    protected static function default_options()
+    protected static function defaultOptions() : array
     {
         if (!empty($GLOBALS['content_width'])) {
             $width = (int) $GLOBALS['content_width'];
@@ -30,41 +30,41 @@ class Options
 
         $options = [
             'embed_defaults' => [
-                'width'	    => $width,
-                'height'	    => $height,
-                'title'	    => __('Embedding', 'fau-oembed')
+                'width'	=> $width,
+                'height' => $height,
+                'title' => __('Embedding', 'fau-oembed')
             ],
             'faukarte' => [
-                'active'	    => true,
-                'apiurl'    => 'karte.fau.de/api/v1/iframe/',
-                'title'	    => __('FAU Karte', 'fau-oembed')
+                'active' => true,
+                'apiurl' => 'karte.fau.de/api/v1/iframe/',
+                'title'	=> __('FAU Karte', 'fau-oembed')
             ],
             'fau_videoportal' => [
-                'active'	    => true,
+                'active' => true,
                 'defaultthumb' => plugin_dir_url(dirname(__FILE__)) . 'assets/images/fau-800x400.png',
-                'display_title'	 => false,
-                'display_source'	=> false,
-                'description'	=> __('Keine Beschreibung verfügbar.', 'fau-oembed')
+                'display_title'	=> false,
+                'display_source' => false,
+                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed')
             ],
             'youtube' => [
                 'active' => true,
                 'norel' => 1,
-                'display_title'	    => false,
-                'display_source'	=> false,
-                'description'	=> __('Keine Beschreibung verfügbar.', 'fau-oembed')
+                'display_title' => false,
+                'display_source' => false,
+                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed')
             ],
             'slideshare' => [
                 'active' => true,
-                'display_title'	    => true,
-                'display_source'	=> true,
-                'description'	=> __('Keine Beschreibung verfügbar.', 'fau-oembed')
+                'display_title' => true,
+                'display_source' => true,
+                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed')
             ],
             'brmediathek' => [
                 'active' => true,
                 'norel' => true,
-                'display_title'	    => false,
-                'display_source'	=> false,
-                'description'	=> __('Keine Beschreibung verfügbar.', 'fau-oembed')
+                'display_title' => false,
+                'display_source' => false,
+                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed')
             ]
         ];
 
@@ -73,26 +73,41 @@ class Options
 
 
     /**
-     * Gibt die Einstellungen zurück.
-     * @return object
+     * Returns the options.
+     * @param  boolean $network [description]
+     * @return object           [description]
      */
-    public static function get_options()
+    public static function getOptions() : object
     {
-        $defaults = self::default_options();
-
-        $options = (array) get_option(self::$option_name);
-        $options = wp_parse_args($options, $defaults);
-        $options = array_intersect_key($options, $defaults);
-
-        return (object) $options;
+        $options = (array) get_option(self::$optionName);
+        return self::parseOptions($options);
     }
 
     /**
-     * Gibt den Namen der Option zurück.
+     * Returns the name of the option.
      * @return string
      */
-    public static function get_option_name()
+    public static function getOptionName() : string
     {
-        return self::$option_name;
+        return self::$optionName;
     }
+    
+    /**
+     * Returns parsed options
+     * @param  array $options [description]
+     * @return object          [description]
+     */
+    protected static function parseOptions(array $options) : object
+    {
+        $defaults = self::defaultOptions();
+        $options = wp_parse_args($options, $defaults);
+        $options = (object) array_intersect_key($options, $defaults);
+        foreach ($defaults as $key => $value) {
+            if (is_array($value)) {
+                $options->$key = wp_parse_args($options->$key, $value);
+                $options->$key = (object) array_intersect_key($options->$key, $value);
+            }
+        }
+        return $options;
+    }    
 }
