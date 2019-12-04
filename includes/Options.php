@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 class Options
 {
     /**
-     * Optionsname
+     * Option name
      * @var string
      */
     protected static $optionName = 'fau_oembed';
@@ -77,7 +77,7 @@ class Options
      * @param  boolean $network [description]
      * @return object           [description]
      */
-    public static function getOptions()
+    public static function getOptions() : object
     {
         $options = (array) get_option(self::$optionName);
         return self::parseOptions($options);
@@ -87,7 +87,7 @@ class Options
      * Returns the name of the option.
      * @return string
      */
-    public static function getOptionName()
+    public static function getOptionName() : string
     {
         return self::$optionName;
     }
