@@ -16,7 +16,7 @@ class Embeds
     
     public function __construct()
     {
-        $this->options = Options::get_options();
+        $this->options = Options::getOptions();
         
         $this->providers = $this->providers();
         $this->handlers = $this->handlers();
@@ -85,7 +85,7 @@ class Embeds
             ],
             'youtube' => [
                 // Content Security Policy (default-src)
-                'allowed_domains' => ['www.youtube-nocookie.com', 'www.youtube.com/', 'youtu.be'],
+                'allowed_domains' => ['www.youtube-nocookie.com', 'www.youtube.com', 'youtu.be'],
                 'youtube_nocookie' => [
                     'regex' => '#https?://www\.youtube\-nocookie\.com/embed/([a-z0-9\-_]+)#i',
                     'callback' => [$this, 'wp_embed_handler_ytnocookie']
@@ -153,14 +153,14 @@ class Embeds
     /*-----------------------------------------------------------------------------------*/
     public function fau_karte()
     {
-        if ($this->options->faukarte['active'] == true) {
+        if ($this->options->faukarte->active == true) {
             $this->registerHandler('fau_kartendienst');
         }
     }
     
     public function wp_embed_handler_faukartenapi($matches, $attr, $url, $rawattr)
     {
-        $karte_api = $this->options->faukarte['apiurl'];
+        $karte_api = $this->options->faukarte->apiurl;
         $karte_start = 'karte.fau.de/api/v1/iframe/';
         $protokoll = "https://";
         
@@ -174,9 +174,9 @@ class Embeds
                 $url = $protokoll . $karte_api . $url;
             }
         }
-        $title = $this->options->faukarte['title'];
-        $width = $this->options->embed_defaults['width'];
-        $height = $this->options->embed_defaults['height'];
+        $title = $this->options->faukarte->title;
+        $width = $this->options->embed_defaults->width;
+        $height = $this->options->embed_defaults->height;
     
         $id = md5(uniqid('', true));
     
@@ -192,7 +192,7 @@ class Embeds
     
     public function wp_embed_handler_faukarte($matches, $attr, $url, $rawattr)
     {
-        $karte_api = $this->options->faukarte['apiurl'];
+        $karte_api = $this->options->faukarte->apiurl;
         $karte_start = 'karte.fau.de/#';
         $protokoll = "https://";
         
@@ -207,9 +207,9 @@ class Embeds
             }
         }
     
-        $title = $this->options->faukarte['title'];
-        $width = $this->options->embed_defaults['width'];
-        $height = $this->options->embed_defaults['height'];
+        $title = $this->options->faukarte->title;
+        $width = $this->options->embed_defaults->width;
+        $height = $this->options->embed_defaults->height;
      
         $id = md5(uniqid('', true));
     
@@ -228,7 +228,7 @@ class Embeds
     /*-----------------------------------------------------------------------------------*/
     public function fau_videoportal()
     {
-        if ($this->options->fau_videoportal['active']  == true) {
+        if ($this->options->fau_videoportal->active  == true) {
             $this->registerHandler('fau_videoportal');
         }
     }
@@ -243,11 +243,11 @@ class Embeds
             return '';
         }
      
-        $title = ! empty($video['title']) ? $video['title'] : $this->options->embed_defaults['title'];
-        $width = isset($video['width']) && absint($video['width']) ? absint($video['width']) : $this->options->embed_defaults['width'];
-        $height = isset($video['height']) && absint($video['height']) ? absint($video['height']) : $this->options->embed_defaults['height'];
-        $image = ! empty($video['preview_image']) ? $video['preview_image'] : $this->options->fau_videoportal['defaultthumb'];
-        $desc = ! empty(sanitize_text_field($video['description'])) ? sanitize_text_field($video['description']) : $this->options->fau_videoportal['description'];
+        $title = ! empty($video['title']) ? $video['title'] : $this->options->embed_defaults->title;
+        $width = isset($video['width']) && absint($video['width']) ? absint($video['width']) : $this->options->embed_defaults->width;
+        $height = isset($video['height']) && absint($video['height']) ? absint($video['height']) : $this->options->embed_defaults->height;
+        $image = ! empty($video['preview_image']) ? $video['preview_image'] : $this->options->fau_videoportal->defaultthumb;
+        $desc = ! empty(sanitize_text_field($video['description'])) ? sanitize_text_field($video['description']) : $this->options->fau_videoportal->description;
      
         $file = $video['file'];
 
@@ -259,7 +259,7 @@ class Embeds
         preg_match('/(\d+)$/', $url, $match);
         $id = md5(uniqid($match[0], true));
     
-        if ($this->options->fau_videoportal['display_title']) {
+        if ($this->options->fau_videoportal->display_title) {
             $embed .= '<h3 id="'.$id.'" itemprop="name">'.$title.'</h3>';
         } else {
             $embed .= '<meta itemprop="name" content="'.$title.'">';
@@ -286,7 +286,7 @@ class Embeds
         $embed .= '<div id="'.$id.'" class="fau-oembed-video">';
         $embed .= '[video preload="none" width="' . $width . '" height="' . $height . '" src="' . $file . '" poster="' . $image . '"][/video]';
         $embed .= '</div>';
-        if ($this->options->fau_videoportal['display_source']) {
+        if ($this->options->fau_videoportal->display_source) {
             $embed .= '<div class="caption">';
             $embed .= __('Quelle:', 'fau-oembed').' ';
             if (! empty($data['author_name'])) {
@@ -306,7 +306,7 @@ class Embeds
     /*-----------------------------------------------------------------------------------*/
     public function youtube_nocookie()
     {
-        if ($this->options->youtube['active'] == true) {
+        if ($this->options->youtube->active == true) {
             wp_oembed_remove_provider('#https?://(www\.)?youtube\.com/watch.*#i');
             wp_oembed_remove_provider('http://youtu.be/*');
             $this->registerHandler('youtube');
@@ -324,20 +324,20 @@ class Embeds
         }
        
         $relvideo = '';
-        if ($this->options->youtube['norel'] == 1) {
+        if ($this->options->youtube->norel == 1) {
             $relvideo = '?rel=0';
         }
        
         $data = OEmbed::get_data($url);
-        $title = ! empty($data['title']) ? $data['title'] : $this->options->embed_defaults['title'];
-        $width = isset($data['width']) && absint($data['width']) ? absint($data['width']) : $this->options->embed_defaults['width'];
-        $height = isset($data['height']) && absint($data['height']) ? absint($data['height']) : $this->options->embed_defaults['height'];
+        $title = ! empty($data['title']) ? $data['title'] : $this->options->embed_defaults->title;
+        $width = isset($data['width']) && absint($data['width']) ? absint($data['width']) : $this->options->embed_defaults->width;
+        $height = isset($data['height']) && absint($data['height']) ? absint($data['height']) : $this->options->embed_defaults->height;
          
         $embed = '<div class="fau-oembed oembed" itemscope itemtype="http://schema.org/VideoObject">';
     
         $id = md5(uniqid($matches[1], true));
         
-        if ($this->options->youtube['display_title']) {
+        if ($this->options->youtube->display_title) {
             $embed .= '<h3 id="'.$id.'" itemprop="name">'.$title.'</h3>';
         } else {
             $embed .= '<meta itemprop="name" content="'.$title.'">';
@@ -380,14 +380,14 @@ class Embeds
             $usedefaultwidth = ' defaultwidth';
         }
     
-        if ($this->options->youtube['display_title']) {
+        if ($this->options->youtube->display_title) {
             $embed .= '<iframe class="youtube'.$usedefaultwidth.'" aria-labelledby="'.$id.'"';
         } else {
             $embed .= '<iframe class="youtube'.$usedefaultwidth.'" title="'.$title.'"';
         }
     
         $embed .= ' src="https://www.youtube-nocookie.com/embed/'.esc_attr($matches[1]).$relvideo.'" width="'.$width.'" height="'.$height.'"></iframe>';
-        if ($this->options->youtube['display_source']) {
+        if ($this->options->youtube->display_source) {
             $embed .= '<div class="caption">';
             $embed .= __('Quelle:', 'fau-oembed').' ';
             if (! empty($data['author_name'])) {
@@ -407,7 +407,7 @@ class Embeds
     /*-----------------------------------------------------------------------------------*/
     public function slideshare()
     {
-        if ($this->options->slideshare['active'] == true) {
+        if ($this->options->slideshare->active == true) {
             wp_oembed_remove_provider('#https?://(.+?\.)?slideshare\.net/.*#i');
             $this->registerHandler('slideshare');
         }
@@ -427,14 +427,14 @@ class Embeds
         if (! $data) {
             return $url;
         }
-        $title = !empty($data['title']) ? $data['title'] : $this->options->embed_defaults['title'];
-        $width = isset($data['width']) && absint($data['width']) ? absint($data['width']) : $this->options->embed_defaults['width'];
-        $height = isset($data['height']) && absint($data['height']) ? absint($data['height']) : $this->options->embed_defaults['height'];
+        $title = !empty($data['title']) ? $data['title'] : $this->options->embed_defaults->title;
+        $width = isset($data['width']) && absint($data['width']) ? absint($data['width']) : $this->options->embed_defaults->width;
+        $height = isset($data['height']) && absint($data['height']) ? absint($data['height']) : $this->options->embed_defaults->height;
      
         $embed = '<div class="fau-oembed oembed" itemscope itemtype="http://schema.org/PresentationDigitalDocument">';
         $id = md5(uniqid('', true));
         
-        if ($this->options->slideshare['display_title']) {
+        if ($this->options->slideshare->display_title) {
             $embed .= '<h3 id="'.$id.'" itemprop="name">'.$title.'</h3>';
         } else {
             $embed .= '<meta itemprop="name" content="'.$title.'">';
@@ -467,7 +467,7 @@ class Embeds
         }
     
     
-        if ($this->options->slideshare['display_title']) {
+        if ($this->options->slideshare->display_title) {
             $embed .= '<iframe class="slideshare defaultwidth" aria-labelledby="'.$id.'"';
         } else {
             $embed .= '<iframe class="slideshare defaultwidth" title="'.$title.'"';
@@ -483,11 +483,11 @@ class Embeds
         }
 
         $embed .= ' src="'.$frameurl.'" width="'.$width.'" height="'.$height.'"></iframe>';
-        if ($this->options->slideshare['display_source']) {
+        if ($this->options->slideshare->display_source) {
             $embed .= '<div class="caption">';
        
         
-            if ($this->options->slideshare['display_title']) {
+            if ($this->options->slideshare->display_title) {
                 if (! empty($data['author_name'])) {
                     $embed .= '<span class="author_name">'.$data['author_name'].'</span>';
                 }
@@ -514,7 +514,7 @@ class Embeds
     /*-----------------------------------------------------------------------------------*/
     public function brmediathek()
     {
-        if ($this->options->brmediathek['active'] == true) {
+        if ($this->options->brmediathek->active == true) {
             wp_oembed_remove_provider('#https?://(www\.)?br\.de/*#i');
             $this->registerHandler('brmediathek');
         }
@@ -533,12 +533,12 @@ class Embeds
         $id = md5(uniqid('', true));
         
         $relvideo = '';
-        if ($this->options->brmediathek['norel']) {
+        if ($this->options->brmediathek->norel) {
             $relvideo = '&rel=0';
         }
         
-        $width = isset($attr['width']) && absint($attr['width']) ? absint($attr['width']) : $this->options->embed_defaults['width'];
-        $height = isset($attr['height']) && absint($attr['height']) ? absint($attr['height']) : $this->options->embed_defaults['height'];
+        $width = isset($attr['width']) && absint($attr['width']) ? absint($attr['width']) : $this->options->embed_defaults->width;
+        $height = isset($attr['height']) && absint($attr['height']) ? absint($attr['height']) : $this->options->embed_defaults->height;
        
         $embed = '<div class="fau-oembed oembed">';
         $embed .= '<div class="elastic-video">';

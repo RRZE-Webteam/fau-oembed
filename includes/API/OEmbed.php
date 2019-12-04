@@ -102,8 +102,8 @@ defined('ABSPATH') || exit;
     /*-----------------------------------------------------------------------------------*/
     
     public function set_embed_defaults($embed_size){
-	$embed_size['width'] = $this->options->embed_defaults['width'];
-	$embed_size['height'] = $this->options->embed_defaults['height'];;
+	$embed_size['width'] = $this->options->embed_defaults->width;
+	$embed_size['height'] = $this->options->embed_defaults->height;
 	return $embed_size;
     }
     

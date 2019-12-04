@@ -12,7 +12,7 @@ class SemiEmbeds {
     protected $options;
 
     public function __construct() {
-        $this->options = Options::get_options();
+        $this->options = Options::getOptions();
 	
 	add_action('init', [$this, 'univis_jobs']);
 
@@ -24,7 +24,7 @@ class SemiEmbeds {
     /*  FAU.TV
     /*-----------------------------------------------------------------------------------*/
     public function univis_jobs() {
-        if ($this->options->fau_videoportal['active']  == true) {           
+        if ($this->options->fau_videoportal->active  == true) {           
 	   wp_embed_register_handler('univis_jobs', '#https?://(www\.)?univis\.(uni\-erlangen|fau)\.de/form\?__s=2&dsc=anew/position_view&.*#i', [$this, 'wp_embed_handler_univis_jobs']); 
 	    
 	}

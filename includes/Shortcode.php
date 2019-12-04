@@ -10,7 +10,7 @@ class Shortcode {
     protected $options;
     
     public function __construct() {
-	$this->options = Options::get_options();
+	$this->options = Options::getOptions();
 	add_shortcode('faukarte', array($this, 'shortcode_faukarte'));
     }
    
@@ -29,11 +29,11 @@ class Shortcode {
         $atts = shortcode_atts($default, $atts);
         extract($atts);
 
-    $width = $this->sanitizeCSSWidth($atts['width'], $this->options->embed_defaults['width']);
-    $height = $this->sanitizeCSSHeight($atts['height'], $this->options->embed_defaults['height']);
+    $width = $this->sanitizeCSSWidth($atts['width'], $this->options->embed_defaults->width);
+    $height = $this->sanitizeCSSHeight($atts['height'], $this->options->embed_defaults->height);
 	 
          if (! empty( $atts['title'] )) {
-	    $title = ! empty( sanitize_title($atts['title']) ) ? sanitize_title($atts['title']) : $this->options->faukarte['title'];
+	    $title = ! empty( sanitize_title($atts['title']) ) ? sanitize_title($atts['title']) : $this->options->faukarte->title;
 	}
 
 	
