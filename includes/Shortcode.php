@@ -29,10 +29,11 @@ class Shortcode {
         $atts = shortcode_atts($default, $atts);
         extract($atts);
 
-    $width = $this->sanitizeCSSWidth($atts['width'], $this->options->embed_defaults->width);
-    $height = $this->sanitizeCSSHeight($atts['height'], $this->options->embed_defaults->height);
-	 
-         if (! empty( $atts['title'] )) {
+	$width = $this->sanitizeCSSWidth($atts['width'], $this->options->embed_defaults->width);
+	$height = $this->sanitizeCSSHeight($atts['height'], $this->options->embed_defaults->height);
+	$notice = $this->options->faukarte->iframe_notice;
+	
+        if (! empty( $atts['title'] )) {
 	    $title = ! empty( sanitize_title($atts['title']) ) ? sanitize_title($atts['title']) : $this->options->faukarte->title;
 	}
 
@@ -62,8 +63,7 @@ class Shortcode {
         }
         wp_enqueue_style('fau-oembed-style');
 	
-	$output = '<div class="fau-oembed oembed">';
-	
+	$output = '<div class="fau-oembed oembed">';	
 	$output .= '<iframe title="'.$title.'" src="'.$url.'"';
 	
 	if (!empty( $atts['width'] )) {
@@ -72,7 +72,11 @@ class Shortcode {
 	    $output .= ' class="fau-karte defaultwidth"';
 	}
 	
-	$output .= ' width="'.$width.'" height="'.$height.'" seamless></iframe>';
+	$output .= ' width="'.$width.'" height="'.$height.'" seamless>';
+	if (!empty($notice)) {
+	     $output .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
+	}
+	$output .= '</iframe>';
 	$output .= '</div>';
         
 	return $output;

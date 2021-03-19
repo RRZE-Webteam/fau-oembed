@@ -37,7 +37,8 @@ class Options
             'faukarte' => [
                 'active' => true,
                 'apiurl' => 'karte.fau.de/api/v1/iframe/',
-                'title'	=> __('FAU Karte', 'fau-oembed')
+                'title'	=> __('FAU Karte', 'fau-oembed'),
+		'iframe_notice'  => __('Dieser Inhalt wurde von fau.karte.de in Form eines Frames eingebunden. Um die Karte direkt aufzurufen folgen Sie den folgenden Link:', 'fau-oembed'),
             ],
             'fau_videoportal' => [
                 'active' => true,
@@ -51,20 +52,23 @@ class Options
                 'norel' => 1,
                 'display_title' => false,
                 'display_source' => false,
-                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed')
+                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed'),
+		'iframe_notice'  => __('Dieser Inhalt in Form eines Frames eingebunden. Um das Medium direkt aufzurufen folgen Sie den folgenden Link:', 'fau-oembed'),
             ],
             'slideshare' => [
                 'active' => true,
                 'display_title' => true,
                 'display_source' => true,
-                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed')
+                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed'),
+		'iframe_notice'  => __('Dieser Inhalt in Form eines Frames eingebunden. Um das Medium direkt aufzurufen folgen Sie den folgenden Link:', 'fau-oembed'),
             ],
             'brmediathek' => [
                 'active' => true,
                 'norel' => true,
                 'display_title' => false,
                 'display_source' => false,
-                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed')
+                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed'),
+		'iframe_notice'  => __('Dieser Inhalt in Form eines Frames eingebunden. Um das Medium direkt aufzurufen folgen Sie den folgenden Link:', 'fau-oembed'),
             ]
         ];
 
