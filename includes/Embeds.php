@@ -177,13 +177,21 @@ class Embeds
         $title = $this->options->faukarte->title;
         $width = $this->options->embed_defaults->width;
         $height = $this->options->embed_defaults->height;
+	$notice = $this->options->faukarte->iframe_notice;
     
         $id = md5(uniqid('', true));
     
         $embed = '<div class="fau-oembed" id="'.$id.'">';
         $embed .= '<iframe title="'.$title.'" src="'.$url.'"';
         $embed .= ' class="fau-karte defaultwidth" width="'.$width.'" height="'.$height.'"';
-        $embed .= ' seamless></iframe>';
+	$embed .= ' seamless>';
+
+
+	if (!empty($notice)) {
+	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
+	}
+	
+        $embed .= '</iframe>';
         $embed .= '</div>';
 
         wp_enqueue_style('fau-oembed-style');
@@ -210,13 +218,19 @@ class Embeds
         $title = $this->options->faukarte->title;
         $width = $this->options->embed_defaults->width;
         $height = $this->options->embed_defaults->height;
-     
+	$notice = $this->options->faukarte->iframe_notice;
+
         $id = md5(uniqid('', true));
     
         $embed = '<div class="fau-oembed" id="'.$id.'">';
         $embed .= '<iframe title="'.$title.'" src="'.$url.'"';
         $embed .= ' class="fau-karte defaultwidth" width="'.$width.'" height="'.$height.'"';
-        $embed .= ' seamless></iframe>';
+        $embed .= ' seamless>';
+	if (!empty($notice)) {
+	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
+	}
+	
+        $embed .= '</iframe>';
         $embed .= '</div>';
 
         wp_enqueue_style('fau-oembed-style');
@@ -386,7 +400,12 @@ class Embeds
             $embed .= '<iframe class="youtube'.$usedefaultwidth.'" title="'.$title.'"';
         }
     
-        $embed .= ' src="https://www.youtube-nocookie.com/embed/'.esc_attr($matches[1]).$relvideo.'" width="'.$width.'" height="'.$height.'"></iframe>';
+        $embed .= ' src="https://www.youtube-nocookie.com/embed/'.esc_attr($matches[1]).$relvideo.'" width="'.$width.'" height="'.$height.'">';
+	$notice = $this->options->youtube->iframe_notice;
+	if (!empty($notice)) {
+	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
+	}
+	$embed .= '</iframe>';
         if ($this->options->youtube->display_source) {
             $embed .= '<div class="caption">';
             $embed .= __('Quelle:', 'fau-oembed').' ';
@@ -482,7 +501,14 @@ class Embeds
             $frameurl = $matches[1];
         }
 
-        $embed .= ' src="'.$frameurl.'" width="'.$width.'" height="'.$height.'"></iframe>';
+        $embed .= ' src="'.$frameurl.'" width="'.$width.'" height="'.$height.'">';
+	
+	$notice = $this->options->slideshare->iframe_notice;
+	if (!empty($notice)) {
+	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
+	}
+	$embed .= '</iframe>';
+	
         if ($this->options->slideshare->display_source) {
             $embed .= '<div class="caption">';
        
@@ -543,7 +569,14 @@ class Embeds
         $embed = '<div class="fau-oembed oembed">';
         $embed .= '<div class="elastic-video">';
         $embed .= '<iframe class="brmediathek defaultwidth" frameborder="0" allow="autoplay; fullscreen" allowfullscreen aria-labelledby="' . $id . '"';
-        $embed .= ' src="https://www.br.de/mediathek/embed/' . esc_attr($matches[1]) . '?autoplay=false&muted=false' . $relvideo . '" width="' . $width.'" height="' . $height . '"></iframe>';
+        $embed .= ' src="https://www.br.de/mediathek/embed/' . esc_attr($matches[1]) . '?autoplay=false&muted=false' . $relvideo . '" width="' . $width.'" height="' . $height . '">';
+	
+	$notice = $this->options->brmediathek->iframe_notice;
+	if (!empty($notice)) {
+	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
+	}
+	$embed .= '</iframe>';
+	
         $embed .= '</div>';
         $embed .= '</div>';
 
