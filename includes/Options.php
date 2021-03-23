@@ -117,13 +117,13 @@ class Options
     }    
     
     
-    public function isPlugin_Embed_Privacy() {
+    public static function isPlugin_Embed_Privacy() : bool {
 	if ( ! class_exists( 'epiphyt\Embed_Privacy\Embed_Privacy' ) ) {
 		return false;
 	}
 	return true;
     }
-    public function handled_by_Embed_Privacy($name) {
+    public static function handled_by_Embed_Privacy($name): bool  {
 	if (self::isPlugin_Embed_Privacy()) {
 	    $ep = new Embed_Privacy;
 	    $embed_privacy_provider = $ep->embed_providers;
