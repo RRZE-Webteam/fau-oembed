@@ -1,6 +1,7 @@
 <?php
 
 namespace FAU\OEmbed;
+use epiphyt\Embed_Privacy\Embed_Privacy as Embed_Privacy;
 
 defined('ABSPATH') || exit;
 
@@ -114,4 +115,26 @@ class Options
         }
         return $options;
     }    
+    
+    
+    public function isPlugin_Embed_Privacy() {
+	if ( ! class_exists( 'epiphyt\Embed_Privacy\Embed_Privacy' ) ) {
+		return false;
+	}
+	return true;
+    }
+    public function handled_by_Embed_Privacy($name) {
+	if (self::isPlugin_Embed_Privacy()) {
+	    $ep = new Embed_Privacy;
+	    $embed_privacy_provider = $ep->embed_providers;
+	    if ((isset($embed_privacy_provider)) && (is_array($embed_privacy_provider))) {
+		foreach ($embed_privacy_provider as $url => $provider) {
+		    if ($name == strtolower(trim($provider))) {
+			return true;
+		    }
+		} 
+	    }
+	}
+	return false;
+    }
 }
