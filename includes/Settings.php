@@ -84,13 +84,15 @@ class Settings {
         add_settings_section('fau_videoportal_section', __('Automatische Einbindung des FAU Videoportals','fau-oembed'), '__return_false', 'fau_oembed_options');
         add_settings_field('fau_videoportal_active', __('Aktivieren','fau-oembed'), [$this, 'fau_videoportal_active'], 'fau_oembed_options', 'fau_videoportal_section');
 
-        add_settings_section('youtube_section', __('Automatische Einbindung von YouTube-Videos ohne Cookies','fau-oembed'), '__return_false', 'fau_oembed_options');
-        add_settings_field('youtube_active', __('Aktivieren','fau-oembed'), [$this, 'youtube_active'], 'fau_oembed_options', 'youtube_section');
-        add_settings_field('youtube_norel', __('Anzeige ähnlicher Videos ausblenden','fau-oembed'), [$this, 'youtube_norel'], 'fau_oembed_options', 'youtube_section');
-	
-	add_settings_section('slideshare_section', __('Automatische Einbindung von Slideshare-Präsentationen','fau-oembed'), '__return_false', 'fau_oembed_options');
-        add_settings_field('slideshare_active', __('Aktivieren','fau-oembed'), [$this, 'slideshare_active'], 'fau_oembed_options', 'slideshare_section');
-	
+	if (!Options::handled_by_Embed_Privacy('youtube')) {
+	    add_settings_section('youtube_section', __('Automatische Einbindung von YouTube-Videos ohne Cookies','fau-oembed'), '__return_false', 'fau_oembed_options');
+	    add_settings_field('youtube_active', __('Aktivieren','fau-oembed'), [$this, 'youtube_active'], 'fau_oembed_options', 'youtube_section');
+	    add_settings_field('youtube_norel', __('Anzeige ähnlicher Videos ausblenden','fau-oembed'), [$this, 'youtube_norel'], 'fau_oembed_options', 'youtube_section');
+	}
+	if (!Options::handled_by_Embed_Privacy('slideshare')) {
+	    add_settings_section('slideshare_section', __('Automatische Einbindung von Slideshare-Präsentationen','fau-oembed'), '__return_false', 'fau_oembed_options');
+	    add_settings_field('slideshare_active', __('Aktivieren','fau-oembed'), [$this, 'slideshare_active'], 'fau_oembed_options', 'slideshare_section');
+	}
 	add_settings_section('brmediathek_section', __('Automatische Einbindung von Videos aus der BR-Mediathek','fau-oembed'), '__return_false', 'fau_oembed_options');
         add_settings_field('brmediathek_active', __('Aktivieren','fau-oembed'), [$this, 'brmediathek_active'], 'fau_oembed_options', 'brmediathek_section');
 	

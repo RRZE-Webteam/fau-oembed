@@ -94,3 +94,12 @@ Einstellungsmenü: Einstellungen › FAU oEmbed
 - Aktivierung der jeweiligen automatischen Einbindung
 - Festlegen der Standardwerte für eingebettete Objekte 
 
+
+## Compatability
+
+This Plugin is compatible to the Plugin Embed Privacy (https://wordpress.org/plugins/embed-privacy/).
+If Embed Privacy  is active, this plugin will give control to Embed Privacy to display the content provider
+and handles only our local providers, like FAU Karte or FAU.tv
+
+
+

@@ -25,11 +25,18 @@ class Embeds
         add_action('init', [$this, 'addProviders']);
         
         // Register Embed Handlers.
-        // Sollte nur für Handlers verwendet werden, die oEmbed nicht unterstützen.
+        // Sollte nur für Handlers verwendet werden, die oEmbed nicht unterstützen 
+	// oder wo wir eine individuelle Anpassung machen.
         add_action('init', [$this, 'fau_karte']);
         add_action('init', [$this, 'fau_videoportal']);
-        add_action('init', [$this, 'youtube_nocookie']);
-        add_action('init', [$this, 'slideshare']);
+	
+	if (!Options::handled_by_Embed_Privacy('youtube')) {
+	       add_action('init', [$this, 'youtube_nocookie']); 
+	} 
+	if (!Options::handled_by_Embed_Privacy('slideshare')) {
+	     add_action('init', [$this, 'slideshare']);	
+	}     
+       
         add_action('init', [$this, 'brmediathek']);
     }
 
@@ -49,6 +56,8 @@ class Embeds
         ];
         return apply_filters('fau_oembed_providers', $providers);
     }
+    
+    
     
     protected function handlers()
     {
@@ -124,8 +133,7 @@ class Embeds
         return apply_filters('fau_oembed_handlers', $handlers);
     }
     
-    public function addProviders()
-    {
+    public function addProviders() {
         foreach ($this->providers as $k => $v) {
             wp_oembed_add_provider($k, $v[0], $v[1]);
         }
@@ -135,11 +143,11 @@ class Embeds
      * [registerHandler description]
      * @param  string $handler [description]
      */
-    protected function registerHandler(string $handler)
-    {
+    protected function registerHandler(string $handler)  {
         if (empty($this->handlers[$handler])) {
             return;
         }
+
         foreach ($this->handlers[$handler] as $k => $v) {
             if ($k == 'allowed_domains') {
                 continue;
@@ -193,7 +201,7 @@ class Embeds
 	
         $embed .= '</iframe>';
         $embed .= '</div>';
-
+	
         wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_faukarte', $embed, $matches, $attr, $url, $rawattr);
     }
