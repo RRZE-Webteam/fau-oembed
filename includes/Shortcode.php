@@ -33,10 +33,7 @@ class Shortcode {
 	$height = $this->sanitizeCSSHeight($atts['height'], $this->options->embed_defaults->height);
 	$notice = $this->options->faukarte->iframe_notice;
 	
-        if (! empty( $atts['title'] )) {
-	    $title = ! empty( sanitize_title($atts['title']) ) ? sanitize_title($atts['title']) : $this->options->faukarte->title;
-	}
-
+        $title = ! empty( $atts['title'] ) ? sanitize_title($atts['title']) : $this->options->faukarte->title;
 	
 	
         if (is_feed()) {
