@@ -78,17 +78,17 @@ class Embeds
             ],
             'fau_videoportal' => [
                 // Content Security Policy (default-src)
-                'allowed_domains' => ['*.video.fau.de', '*.video.uni-erlangen.de'],
+                'allowed_domains' => ['*.fau.tv', '*.video.fau.de', '*.video.uni-erlangen.de'],
                 'fau_videoportal_webplayer' => [
-                    'regex' => '#https?://(www\.)?video\.uni-erlangen\.de/webplayer/id/([\d]+)/?#i',
+                    'regex' => '#https?://(www\.)?(video\.)?(uni\-erlangen|fau)\.(de|tv)/webplayer/id/([\d]+)/?#i',
                     'callback' => [$this, 'wp_embed_handler_fautv']
                 ],
                 'fau_videoportal_clip' => [
-                    'regex' => '#https?://(www\.)?video\.(uni\-erlangen|fau)\.de/clip/id/.*#i',
+                    'regex' => '#https?://(www\.)?(video\.)?(uni\-erlangen|fau)\.(de|tv)/clip/id/.\d*#i',
                     'callback' => [$this, 'wp_embed_handler_fautv']
                 ],
                 'fau_videoportal_collection' => [
-                    'regex' => '#https?://(www\.)?video\.(uni\-erlangen|fau)\.de/collection/clip/\d+/.*#i',
+                    'regex' => '#https?://(www\.)?(video\.)?(uni\-erlangen|fau)\.(de|tv)/collection/clip/\d+/.*#i',
                     'callback' => [$this, 'wp_embed_handler_fautv']
                 ]
             ],
@@ -147,7 +147,6 @@ class Embeds
         if (empty($this->handlers[$handler])) {
             return;
         }
-
         foreach ($this->handlers[$handler] as $k => $v) {
             if ($k == 'allowed_domains') {
                 continue;
@@ -257,7 +256,7 @@ class Embeds
 
     public function wp_embed_handler_fautv($matches, $attr, $url, $rawattr)
     {
-        $oembed_url = 'https://www.video.uni-erlangen.de/services/oembed/?url=' . $matches[0] . '&format=json';
+        $oembed_url = 'https://www.fau.tv/services/oembed/?url=' . $matches[0] . '&format=json';
         $video = json_decode(wp_remote_retrieve_body(wp_safe_remote_get($oembed_url)), true);
 
     
@@ -279,7 +278,8 @@ class Embeds
     
     
         preg_match('/(\d+)$/', $url, $match);
-        $id = md5(uniqid($match[0], true));
+        $prefix = $match[0] ?? '';
+        $id = md5(uniqid($prefix, true));
     
         if ($this->options->fau_videoportal->display_title) {
             $embed .= '<h3 id="'.$id.'" itemprop="name">'.$title.'</h3>';
