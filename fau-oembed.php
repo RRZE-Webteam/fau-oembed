@@ -5,7 +5,7 @@
  * Plugin URI:          https://github.com/RRZE-Webteam/fau-oembed
  * GitHub Plugin URI:   https://github.com/RRZE-Webteam/fau-oembed
  * Description:         Automatische Einbindung der FAU-Karten, Videos von FAU.tv, YouTube-Videos ohne Cookies, sowie weitere oEmbed-Quellen der FAU.
- * Version:             3.2.2
+ * Version:             3.2.3
  * Author:              RRZE-Webteam
  * Author URI:          https://blogs.fau.de/webworking/
  * License:             GNU General Public License v2
