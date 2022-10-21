@@ -2,7 +2,8 @@
 
 namespace FAU\OEmbed;
 
-use  FAU\OEmbed\API\OEmbed;
+use FAU\OEmbed\API\OEmbed;
+use FAU\OEmbed\Services\FauMac;
 
 defined('ABSPATH') || exit;
 
@@ -38,6 +39,8 @@ class Embeds
 	}     
        
         add_action('init', [$this, 'brmediathek']);
+
+        FauMac::getInstance();
     }
 
     protected function providers()
@@ -310,7 +313,7 @@ class Embeds
         $embed .= '</div>';
         if ($this->options->fau_videoportal->display_source) {
             $embed .= '<div class="caption">';
-            $embed .= __('Quelle:', 'fau-oembed').' ';
+            $embed .= __('Source:', 'fau-oembed').' ';
             if (! empty($data['author_name'])) {
                 $embed .= '<span class="author_name">'.$data['author_name'].'</span>, ';
             }
@@ -380,7 +383,7 @@ class Embeds
                 $desc .= $data['provider_name'].' '.__('Video', 'fau-oembed');
             }
             if (! empty($data['author_name'])) {
-                $desc .= ' '.__('von', 'fau-oembed').' '.$data['author_name'];
+                $desc .= ' '.__('by', 'fau-oembed').' '.$data['author_name'];
             }
             $embed .= '<meta itemprop="description" content="'.$desc.'">';
         }
@@ -416,7 +419,7 @@ class Embeds
 	$embed .= '</iframe>';
         if ($this->options->youtube->display_source) {
             $embed .= '<div class="caption">';
-            $embed .= __('Quelle:', 'fau-oembed').' ';
+            $embed .= __('Source:', 'fau-oembed').' ';
             if (! empty($data['author_name'])) {
                 $embed .= '<span class="author_name">'.$data['author_name'].'</span>, ';
             }
@@ -478,10 +481,10 @@ class Embeds
             $desc = '';
         
             if (! empty($data['provider_name'])) {
-                $desc .= $data['provider_name'].' '.__('Folien', 'fau-oembed');
+                $desc .= $data['provider_name'].' '.__('Slides', 'fau-oembed');
             }
             if (! empty($data['author_name'])) {
-                $desc .= ' '.__('von', 'fau-oembed').' '.$data['author_name'];
+                $desc .= ' '.__('by', 'fau-oembed').' '.$data['author_name'];
             }
             $embed .= '<meta itemprop="description" content="'.$desc.'">';
         }
@@ -525,11 +528,11 @@ class Embeds
                 if (! empty($data['author_name'])) {
                     $embed .= '<span class="author_name">'.$data['author_name'].'</span>';
                 }
-                $embed .= ' '.__('auf', 'fau-oembed').' <a href="'.$url.'">'.$data['provider_name'].'</a>';
+                $embed .= ' '.__('on', 'fau-oembed').' <a href="'.$url.'">'.$data['provider_name'].'</a>';
             } else {
                 $embed .= '<a href="'.$url.'">'.$title.'</a>';
                 if (! empty($data['author_name'])) {
-                    $embed .= __('von', 'fau-oembed').' <span class="author_name">'.$data['author_name'].'</span>, ';
+                    $embed .= __('by', 'fau-oembed').' <span class="author_name">'.$data['author_name'].'</span>, ';
                 }
             }
         
