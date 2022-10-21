@@ -38,38 +38,38 @@ class Options
             'faukarte' => [
                 'active' => true,
                 'apiurl' => 'karte.fau.de/api/v1/iframe/',
-                'title'	=> __('FAU Karte', 'fau-oembed'),
-		'iframe_notice'  => __('Dieser Inhalt wurde von fau.karte.de in Form eines Frames eingebunden. Um die Karte direkt aufzurufen folgen Sie den folgenden Link:', 'fau-oembed'),
+                'title'	=> __('FAU Map', 'fau-oembed'),
+		'iframe_notice'  => __('This content was integrated by fau.karte.de in the form of a frame. To access the map directly, follow the link below:', 'fau-oembed'),
             ],
             'fau_videoportal' => [
                 'active' => true,
                 'defaultthumb' => plugin_dir_url(dirname(__FILE__)) . 'assets/images/fau-800x400.png',
                 'display_title'	=> false,
                 'display_source' => false,
-                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed')
+                'description' => __('No description available.', 'fau-oembed')
             ],
             'youtube' => [
                 'active' => true,
                 'norel' => 1,
                 'display_title' => false,
                 'display_source' => false,
-                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed'),
-		'iframe_notice'  => __('Dieser Inhalt in Form eines Frames eingebunden. Um das Medium direkt aufzurufen folgen Sie den folgenden Link:', 'fau-oembed'),
+                'description' => __('No description available.', 'fau-oembed'),
+		'iframe_notice'  => __('This content is integrated in the form of a frame. To access the medium directly, follow the link below:', 'fau-oembed'),
             ],
             'slideshare' => [
                 'active' => true,
                 'display_title' => true,
                 'display_source' => true,
-                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed'),
-		'iframe_notice'  => __('Dieser Inhalt in Form eines Frames eingebunden. Um das Medium direkt aufzurufen folgen Sie den folgenden Link:', 'fau-oembed'),
+                'description' => __('No description available.', 'fau-oembed'),
+		'iframe_notice'  => __('This content is integrated in the form of a frame. To access the medium directly, follow the link below:', 'fau-oembed'),
             ],
             'brmediathek' => [
                 'active' => true,
                 'norel' => true,
                 'display_title' => false,
                 'display_source' => false,
-                'description' => __('Keine Beschreibung verfügbar.', 'fau-oembed'),
-		'iframe_notice'  => __('Dieser Inhalt in Form eines Frames eingebunden. Um das Medium direkt aufzurufen folgen Sie den folgenden Link:', 'fau-oembed'),
+                'description' => __('No description available.', 'fau-oembed'),
+		'iframe_notice'  => __('This content is integrated in the form of a frame. To access the medium directly, follow the link below:', 'fau-oembed'),
             ]
         ];
 

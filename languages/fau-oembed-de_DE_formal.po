@@ -1,0 +1,160 @@
+# Copyright (C) 2022 RRZE-Webteam
+# This file is distributed under the GNU General Public License v2.
+msgid ""
+msgstr ""
+"Project-Id-Version: FAU oEmbed 3.2.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/fau-oembed\n"
+"POT-Creation-Date: 2022-10-21T12:56:05+00:00\n"
+"PO-Revision-Date: 2022-10-21 15:13+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_DE@formal\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.1.1\n"
+"X-Domain: fau-oembed\n"
+
+#. Plugin Name of the plugin
+#: includes/Settings.php:44
+msgid "FAU oEmbed"
+msgstr "FAU oEmbed"
+
+#. Plugin URI of the plugin
+msgid "https://github.com/RRZE-Webteam/fau-oembed"
+msgstr "https://github.com/RRZE-Webteam/fau-oembed"
+
+#. Description of the plugin
+msgid ""
+"Automatic integration of FAU maps, videos from FAU.tv, YouTube videos "
+"without cookies, and other FAU oEmbed sources."
+msgstr ""
+"Automatische Einbindung der FAU-Karten, Videos von FAU.tv, YouTube-Videos "
+"ohne Cookies, sowie weitere oEmbed-Quellen der FAU."
+
+#. Author of the plugin
+msgid "RRZE-Webteam"
+msgstr "RRZE-Webteam"
+
+#. Author URI of the plugin
+msgid "https://blogs.fau.de/webworking/"
+msgstr "https://blogs.fau.de/webworking/"
+
+#. translators: 1: Server PHP version number, 2: Required PHP version number.
+#: fau-oembed.php:74
+msgid ""
+"The server is running PHP version %1$s. The Plugin requires at least PHP "
+"version %2$s."
+msgstr ""
+"Auf dem Server läuft PHP Version %1$s. Das Plugin benötigt mindestens PHP "
+"Version %2$s."
+
+#. translators: 1: Server WordPress version number, 2: Required WordPress version number.
+#: fau-oembed.php:81
+msgid ""
+"The server is running WordPress version %1$s. The Plugin requires at least "
+"WordPress version %2$s."
+msgstr ""
+"Auf dem Server läuft WordPress Version %1$s. Das Plugin benötigt "
+"mindestens WordPress Version %2$s."
+
+#. translators: 1: The plugin name, 2: The error string.
+#: fau-oembed.php:100 fau-oembed.php:147
+msgid "Plugins: %1$s: %2$s"
+msgstr "Plugins: %1$s: %2$s"
+
+#: includes/Embeds.php:316 includes/Embeds.php:422
+msgid "Source:"
+msgstr "Quelle:"
+
+#: includes/Embeds.php:383
+msgid "Video"
+msgstr "Video"
+
+#: includes/Embeds.php:386 includes/Embeds.php:487 includes/Embeds.php:535
+msgid "by"
+msgstr "von"
+
+#: includes/Embeds.php:484
+msgid "Slides"
+msgstr "Folien"
+
+#: includes/Embeds.php:531
+msgid "on"
+msgstr "an"
+
+#: includes/Options.php:36
+msgid "Embedding"
+msgstr "Einbetten"
+
+#: includes/Options.php:41
+msgid "FAU Map"
+msgstr "FAU-Karte"
+
+#: includes/Options.php:42
+msgid ""
+"This content was integrated by fau.karte.de in the form of a frame. To "
+"access the map directly, follow the link below:"
+msgstr ""
+"Diese Inhalte wurden von fau.karte.de in Form eines Frames eingebunden. Um "
+"direkt auf die Karte zuzugreifen, folgen Sie dem folgenden Link:"
+
+#: includes/Options.php:49 includes/Options.php:56 includes/Options.php:63
+#: includes/Options.php:71
+msgid "No description available."
+msgstr "Keine Beschreibung verfügbar."
+
+#: includes/Options.php:57 includes/Options.php:64 includes/Options.php:72
+msgid ""
+"This content is integrated in the form of a frame. To access the medium "
+"directly, follow the link below:"
+msgstr ""
+"Diese Inhalte werden in Form eines Frames eingebunden. Um direkt auf das "
+"Medium zuzugreifen, folgen Sie dem folgenden Link:"
+
+#: includes/Settings.php:54
+msgid "FAU oEmbed Settings"
+msgstr "Einstellungen &rsaquo; FAU oEmbed"
+
+#: includes/Settings.php:74
+msgid "Default values for embedded objects"
+msgstr "Standardwerte für eingebettete Objekte"
+
+#: includes/Settings.php:76
+msgid "Width"
+msgstr "Breite"
+
+#: includes/Settings.php:77
+msgid "Height"
+msgstr "Höhe"
+
+#: includes/Settings.php:79
+msgid "Automatic integration of FAU Maps"
+msgstr "Automatische Einbindung von FAU-Karten"
+
+#: includes/Settings.php:82
+msgid "Automatic integration of the FAU Video Portal"
+msgstr "Automatische Einbindung des FAU Video Portals"
+
+#: includes/Settings.php:86
+msgid "Automatic integration of YouTube videos without cookies"
+msgstr "Automatische Einbindung von YouTube-Videos ohne Cookies"
+
+#: includes/Settings.php:88
+msgid "Hide display of related videos"
+msgstr "Anzeige verwandter Videos ausblenden"
+
+#: includes/Settings.php:91
+msgid "Automatic integration of Slideshare presentations"
+msgstr "Automatische Einbindung von Slideshare-Präsentationen"
+
+#: includes/Settings.php:94
+msgid "Automatic integration of videos from the BR media library"
+msgstr "Automatische Einbindung von Videos aus der BR-Mediathek"
+
+#: includes/Settings.php:138
+msgid "Only works if automatic embedding of YouTube videos is activated."
+msgstr ""
+"Funktioniert nur, wenn die automatische Einbettung von YouTube-Videos "
+"aktiviert ist."
