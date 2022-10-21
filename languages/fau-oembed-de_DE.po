@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FAU oEmbed\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/fau-oembed\n"
-"POT-Creation-Date: 2022-10-21T12:56:05+00:00\n"
-"PO-Revision-Date: 2022-10-21 15:12+0200\n"
+"POT-Creation-Date: 2022-10-21T13:51:33+00:00\n"
+"PO-Revision-Date: 2022-10-21 15:52+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -132,6 +132,11 @@ msgstr "Höhe"
 #: includes/Settings.php:79
 msgid "Automatic integration of FAU Maps"
 msgstr "Automatische Einbindung von FAU-Karten"
+
+#: includes/Settings.php:80 includes/Settings.php:87 includes/Settings.php:92
+#: includes/Settings.php:95
+msgid "Activate"
+msgstr "Aktivieren"
 
 #: includes/Settings.php:82
 msgid "Automatic integration of the FAU Video Portal"
