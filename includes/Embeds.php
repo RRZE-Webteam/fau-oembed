@@ -12,32 +12,32 @@ class Embeds
     protected $options;
 
     protected $providers;
-    
+
     protected $handlers;
-    
+
     public function __construct()
     {
         $this->options = Options::getOptions();
-        
+
         $this->providers = $this->providers();
         $this->handlers = $this->handlers();
-        
+
         // Add Custom oEmbed Providers
         add_action('init', [$this, 'addProviders']);
-        
+
         // Register Embed Handlers.
         // Sollte nur für Handlers verwendet werden, die oEmbed nicht unterstützen 
-	// oder wo wir eine individuelle Anpassung machen.
+        // oder wo wir eine individuelle Anpassung machen.
         add_action('init', [$this, 'fau_karte']);
         add_action('init', [$this, 'fau_videoportal']);
-	
-	if (!Options::handled_by_Embed_Privacy('youtube')) {
-	       add_action('init', [$this, 'youtube_nocookie']); 
-	} 
-	if (!Options::handled_by_Embed_Privacy('slideshare')) {
-	     add_action('init', [$this, 'slideshare']);	
-	}     
-       
+
+        if (!Options::handled_by_Embed_Privacy('youtube')) {
+            add_action('init', [$this, 'youtube_nocookie']);
+        }
+        if (!Options::handled_by_Embed_Privacy('slideshare')) {
+            add_action('init', [$this, 'slideshare']);
+        }
+
         add_action('init', [$this, 'brmediathek']);
 
         FauMac::getInstance();
@@ -59,9 +59,9 @@ class Embeds
         ];
         return apply_filters('fau_oembed_providers', $providers);
     }
-    
-    
-    
+
+
+
     protected function handlers()
     {
         $handlers = [
@@ -99,19 +99,23 @@ class Embeds
                 // Content Security Policy (default-src)
                 'allowed_domains' => ['www.youtube-nocookie.com', 'www.youtube.com', 'youtu.be'],
                 'youtube_nocookie' => [
-                    'regex' => '#https?://www\.youtube\-nocookie\.com/embed/([a-z0-9\-_]+)#i',
+                    'regex' => '#https?://((m|www)\.)?youtube\-nocookie\.com/embed/([a-z0-9\-_]+)#i',
                     'callback' => [$this, 'wp_embed_handler_ytnocookie']
                 ],
                 'youtube_normal' => [
-                    'regex' => '#https?://www\.youtube\.com/watch\?v=([a-z0-9\-_]+)#i',
+                    'regex' => '#https?://((m|www)\.)?youtube\.com/watch\?v=([a-z0-9\-_]+)#i',
                     'callback' => [$this, 'wp_embed_handler_ytnocookie']
                 ],
                 'youtube_normal2' => [
-                    'regex' => '#https?://www\.youtube\.com/watch\?feature=player_embedded&v=([a-z0-9\-_]+)#i',
+                    'regex' => '#https?://((m|www)\.)?youtube\.com/watch\?feature=player_embedded&v=([a-z0-9\-_]+)#i',
+                    'callback' => [$this, 'wp_embed_handler_ytnocookie']
+                ],
+                'youtube_shorts' => [
+                    'regex' => '#https?://((m|www)\.)?youtube\.com/shorts/([a-z0-9\-_]+)#i',
                     'callback' => [$this, 'wp_embed_handler_ytnocookie']
                 ],
                 'youtube_tube' => [
-                    'regex' => '#http://youtu\.be/([a-z0-9\-_]+)#i',
+                    'regex' => '#http://((m|www)\.)?youtu\.be/([a-z0-9\-_]+)#i',
                     'callback' => [$this, 'wp_embed_handler_ytnocookie']
                 ]
             ],
@@ -135,18 +139,20 @@ class Embeds
         ];
         return apply_filters('fau_oembed_handlers', $handlers);
     }
-    
-    public function addProviders() {
+
+    public function addProviders()
+    {
         foreach ($this->providers as $k => $v) {
             wp_oembed_add_provider($k, $v[0], $v[1]);
         }
     }
-    
+
     /**
      * [registerHandler description]
      * @param  string $handler [description]
      */
-    protected function registerHandler(string $handler)  {
+    protected function registerHandler(string $handler)
+    {
         if (empty($this->handlers[$handler])) {
             return;
         }
@@ -157,7 +163,7 @@ class Embeds
             wp_embed_register_handler($k, $v['regex'], $v['callback']);
         }
     }
-    
+
     /*-----------------------------------------------------------------------------------*/
     /* FAU Karte
     /*-----------------------------------------------------------------------------------*/
@@ -167,18 +173,18 @@ class Embeds
             $this->registerHandler('fau_kartendienst');
         }
     }
-    
+
     public function wp_embed_handler_faukartenapi($matches, $attr, $url, $rawattr)
     {
         $karte_api = $this->options->faukarte->apiurl;
         $karte_start = 'karte.fau.de/api/v1/iframe/';
         $protokoll = "https://";
-        
+
         if (strpos($url, 'http://') !== false) {
             $url = str_replace('http://', $protokoll, $url);
         }
 
-        
+
         if (strpos($url, $karte_start) === false) {
             if (strpos($url, $karte_api) === true) {
                 $url = $protokoll . $karte_api . $url;
@@ -187,66 +193,66 @@ class Embeds
         $title = $this->options->faukarte->title;
         $width = $this->options->embed_defaults->width;
         $height = $this->options->embed_defaults->height;
-	$notice = $this->options->faukarte->iframe_notice;
-    
+        $notice = $this->options->faukarte->iframe_notice;
+
         $id = md5(uniqid('', true));
-    
-        $embed = '<div class="fau-oembed" id="'.$id.'">';
-        $embed .= '<iframe title="'.$title.'" src="'.$url.'"';
-        $embed .= ' class="fau-karte defaultwidth" width="'.$width.'" height="'.$height.'"';
-	$embed .= ' seamless>';
+
+        $embed = '<div class="fau-oembed" id="' . $id . '">';
+        $embed .= '<iframe title="' . $title . '" src="' . $url . '"';
+        $embed .= ' class="fau-karte defaultwidth" width="' . $width . '" height="' . $height . '"';
+        $embed .= ' seamless>';
 
 
-	if (!empty($notice)) {
-	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
-	}
-	
+        if (!empty($notice)) {
+            $embed .= '<p>' . $notice . ' <a href="' . $url . '">' . $url . '</a></p>';
+        }
+
         $embed .= '</iframe>';
         $embed .= '</div>';
-	
+
         wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_faukarte', $embed, $matches, $attr, $url, $rawattr);
     }
-    
+
     public function wp_embed_handler_faukarte($matches, $attr, $url, $rawattr)
     {
         $karte_api = $this->options->faukarte->apiurl;
         $karte_start = 'karte.fau.de/#';
         $protokoll = "https://";
-        
+
         if (strpos($url, 'http://') !== false) {
             $url = str_replace('http://', $protokoll, $url);
         }
 
-        
+
         if (strpos($url, $karte_start) === false) {
             if (strpos($url, $karte_api) === false) {
                 $url = $protokoll . $karte_api . $url;
             }
         }
-    
+
         $title = $this->options->faukarte->title;
         $width = $this->options->embed_defaults->width;
         $height = $this->options->embed_defaults->height;
-	$notice = $this->options->faukarte->iframe_notice;
+        $notice = $this->options->faukarte->iframe_notice;
 
         $id = md5(uniqid('', true));
-    
-        $embed = '<div class="fau-oembed" id="'.$id.'">';
-        $embed .= '<iframe title="'.$title.'" src="'.$url.'"';
-        $embed .= ' class="fau-karte defaultwidth" width="'.$width.'" height="'.$height.'"';
+
+        $embed = '<div class="fau-oembed" id="' . $id . '">';
+        $embed .= '<iframe title="' . $title . '" src="' . $url . '"';
+        $embed .= ' class="fau-karte defaultwidth" width="' . $width . '" height="' . $height . '"';
         $embed .= ' seamless>';
-	if (!empty($notice)) {
-	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
-	}
-	
+        if (!empty($notice)) {
+            $embed .= '<p>' . $notice . ' <a href="' . $url . '">' . $url . '</a></p>';
+        }
+
         $embed .= '</iframe>';
         $embed .= '</div>';
 
         wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_faukarte', $embed, $matches, $attr, $url, $rawattr);
     }
-    
+
     /*-----------------------------------------------------------------------------------*/
     /*  FAU Videoportal
     /*-----------------------------------------------------------------------------------*/
@@ -262,70 +268,70 @@ class Embeds
         $oembed_url = 'https://www.fau.tv/services/oembed/?url=' . $matches[0] . '&format=json';
         $video = json_decode(wp_remote_retrieve_body(wp_safe_remote_get($oembed_url)), true);
 
-    
+
         if (!isset($video['file'])) {
             return '';
         }
-     
-        $title = ! empty($video['title']) ? $video['title'] : $this->options->embed_defaults->title;
+
+        $title = !empty($video['title']) ? $video['title'] : $this->options->embed_defaults->title;
         $width = isset($video['width']) && absint($video['width']) ? absint($video['width']) : $this->options->embed_defaults->width;
         $height = isset($video['height']) && absint($video['height']) ? absint($video['height']) : $this->options->embed_defaults->height;
-        $image = ! empty($video['preview_image']) ? $video['preview_image'] : $this->options->fau_videoportal->defaultthumb;
-        $desc = ! empty(sanitize_text_field($video['description'])) ? sanitize_text_field($video['description']) : $this->options->fau_videoportal->description;
-     
+        $image = !empty($video['preview_image']) ? $video['preview_image'] : $this->options->fau_videoportal->defaultthumb;
+        $desc = !empty(sanitize_text_field($video['description'])) ? sanitize_text_field($video['description']) : $this->options->fau_videoportal->description;
+
         $file = $video['file'];
 
-        
+
         $embed = '<div class="fau-oembed oembed fauvideo" itemscope itemtype="http://schema.org/VideoObject">';
-    
-    
-    
+
+
+
         preg_match('/(\d+)$/', $url, $match);
         $prefix = $match[0] ?? '';
         $id = md5(uniqid($prefix, true));
-    
+
         if ($this->options->fau_videoportal->display_title) {
-            $embed .= '<h3 id="'.$id.'" itemprop="name">'.$title.'</h3>';
+            $embed .= '<h3 id="' . $id . '" itemprop="name">' . $title . '</h3>';
         } else {
-            $embed .= '<meta itemprop="name" content="'.$title.'">';
+            $embed .= '<meta itemprop="name" content="' . $title . '">';
         }
-    
-        $embed .= '<meta itemprop="contentUrl" content="'.$file.'">';
-        $embed .= '<meta itemprop="url" content="'.$url.'">';
-        $embed .= '<meta itemprop="height" content="'.$video['height'].'">';
-        $embed .= '<meta itemprop="width" content="'.$video['width'].'">';
-        $embed .= '<meta itemprop="thumbnailUrl" content="'.$image.'">';
-        $embed .= '<meta itemprop="description" content="'.$desc.'">';
-    
-    
-        if (! empty($data['author_name'])) {
-            $embed .= '<meta itemprop="author" content="'.$data['author_name'].'">';
+
+        $embed .= '<meta itemprop="contentUrl" content="' . $file . '">';
+        $embed .= '<meta itemprop="url" content="' . $url . '">';
+        $embed .= '<meta itemprop="height" content="' . $video['height'] . '">';
+        $embed .= '<meta itemprop="width" content="' . $video['width'] . '">';
+        $embed .= '<meta itemprop="thumbnailUrl" content="' . $image . '">';
+        $embed .= '<meta itemprop="description" content="' . $desc . '">';
+
+
+        if (!empty($data['author_name'])) {
+            $embed .= '<meta itemprop="author" content="' . $data['author_name'] . '">';
         }
-        if (! empty($data['provider_name'])) {
-            $embed .= '<meta itemprop="provider" content="'.$data['provider_name'].'">';
+        if (!empty($data['provider_name'])) {
+            $embed .= '<meta itemprop="provider" content="' . $data['provider_name'] . '">';
         }
-        if (! empty($data['upload_date'])) {
-            $embed .= '<meta itemprop="uploadDate" content="'.$data['upload_date'].'">';
+        if (!empty($data['upload_date'])) {
+            $embed .= '<meta itemprop="uploadDate" content="' . $data['upload_date'] . '">';
         }
-    
-        $embed .= '<div id="'.$id.'" class="fau-oembed-video">';
+
+        $embed .= '<div id="' . $id . '" class="fau-oembed-video">';
         $embed .= '[video preload="none" width="' . $width . '" height="' . $height . '" src="' . $file . '" poster="' . $image . '"][/video]';
         $embed .= '</div>';
         if ($this->options->fau_videoportal->display_source) {
             $embed .= '<div class="caption">';
-            $embed .= __('Source:', 'fau-oembed').' ';
-            if (! empty($data['author_name'])) {
-                $embed .= '<span class="author_name">'.$data['author_name'].'</span>, ';
+            $embed .= __('Source:', 'fau-oembed') . ' ';
+            if (!empty($data['author_name'])) {
+                $embed .= '<span class="author_name">' . $data['author_name'] . '</span>, ';
             }
-            $embed .= '<span class="url">'.$url.'</span>';
+            $embed .= '<span class="url">' . $url . '</span>';
             $embed .= '</div>';
         }
         $embed .= '</div>';
-    
+
         wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_fautv', $embed, $matches, $attr, $url, $rawattr);
     }
-    
+
     /*-----------------------------------------------------------------------------------*/
     /*  YouTube
     /*-----------------------------------------------------------------------------------*/
@@ -347,91 +353,95 @@ class Embeds
                 return '';
             }
         }
-       
+
         $relvideo = '';
         if ($this->options->youtube->norel == 1) {
             $relvideo = '?rel=0';
         }
-       
+
         $data = OEmbed::get_data($url);
-        $title = ! empty($data['title']) ? $data['title'] : $this->options->embed_defaults->title;
+        $title = !empty($data['title']) ? $data['title'] : $this->options->embed_defaults->title;
         $width = isset($data['width']) && absint($data['width']) ? absint($data['width']) : $this->options->embed_defaults->width;
         $height = isset($data['height']) && absint($data['height']) ? absint($data['height']) : $this->options->embed_defaults->height;
-         
-        $embed = '<div class="fau-oembed oembed" itemscope itemtype="http://schema.org/VideoObject">';
-    
-        $id = md5(uniqid($matches[1], true));
-        
-        if ($this->options->youtube->display_title) {
-            $embed .= '<h3 id="'.$id.'" itemprop="name">'.$title.'</h3>';
-        } else {
-            $embed .= '<meta itemprop="name" content="'.$title.'">';
-        }
-        $embed .= '<meta itemprop="url" content="'.$url.'">';
-        $embed .= '<meta itemprop="contentUrl" content="'.$url.'">';
-        if (! empty($data['thumbnail_url'])) {
-            $embed .= '<meta itemprop="thumbnail" content="'.$data['thumbnail_url'].'">';
-        }
-    
 
-        if (! empty($data['description'])) {
-            $embed .= '<meta itemprop="description" content="'.$data['description'].'">';
+        $embed = '<div class="fau-oembed oembed" itemscope itemtype="http://schema.org/VideoObject">';
+
+        $ytid = $matches[3] ?? '';
+        if (empty($ytid)) {
+            return '';
+        }
+        $id = md5(uniqid($ytid, true));
+
+        if ($this->options->youtube->display_title) {
+            $embed .= '<h3 id="' . $id . '" itemprop="name">' . $title . '</h3>';
+        } else {
+            $embed .= '<meta itemprop="name" content="' . $title . '">';
+        }
+        $embed .= '<meta itemprop="url" content="' . $url . '">';
+        $embed .= '<meta itemprop="contentUrl" content="' . $url . '">';
+        if (!empty($data['thumbnail_url'])) {
+            $embed .= '<meta itemprop="thumbnail" content="' . $data['thumbnail_url'] . '">';
+        }
+
+
+        if (!empty($data['description'])) {
+            $embed .= '<meta itemprop="description" content="' . $data['description'] . '">';
         } else {
             $desc = '';
-        
-            if (! empty($data['provider_name'])) {
-                $desc .= $data['provider_name'].' '.__('Video', 'fau-oembed');
+
+            if (!empty($data['provider_name'])) {
+                $desc .= $data['provider_name'] . ' ' . __('Video', 'fau-oembed');
             }
-            if (! empty($data['author_name'])) {
-                $desc .= ' '.__('by', 'fau-oembed').' '.$data['author_name'];
+            if (!empty($data['author_name'])) {
+                $desc .= ' ' . __('by', 'fau-oembed') . ' ' . $data['author_name'];
             }
-            $embed .= '<meta itemprop="description" content="'.$desc.'">';
+            $embed .= '<meta itemprop="description" content="' . $desc . '">';
         }
-        if (! empty($data['width'])) {
-            $embed .= '<meta itemprop="width" content="'.$data['width'].'">';
+        if (!empty($data['width'])) {
+            $embed .= '<meta itemprop="width" content="' . $data['width'] . '">';
         }
-        if (! empty($data['height'])) {
-            $embed .= '<meta itemprop="height" content="'.$data['height'].'">';
+        if (!empty($data['height'])) {
+            $embed .= '<meta itemprop="height" content="' . $data['height'] . '">';
         }
-        if (! empty($data['author_name'])) {
-            $embed .= '<meta itemprop="author" content="'.$data['author_name'].'">';
+        if (!empty($data['author_name'])) {
+            $embed .= '<meta itemprop="author" content="' . $data['author_name'] . '">';
         }
-        if (! empty($data['provider_name'])) {
-            $embed .= '<meta itemprop="provider" content="'.$data['provider_name'].'">';
+        if (!empty($data['provider_name'])) {
+            $embed .= '<meta itemprop="provider" content="' . $data['provider_name'] . '">';
         }
-    
+
         $usedefaultwidth = '';
         if (empty($data['width'])) {
             $usedefaultwidth = ' defaultwidth';
         }
-    
+
         if ($this->options->youtube->display_title) {
-            $embed .= '<iframe class="youtube'.$usedefaultwidth.'" aria-labelledby="'.$id.'"';
+            $embed .= '<iframe class="youtube' . $usedefaultwidth . '" aria-labelledby="' . $id . '"';
         } else {
-            $embed .= '<iframe class="youtube'.$usedefaultwidth.'" title="'.$title.'"';
+            $embed .= '<iframe class="youtube' . $usedefaultwidth . '" title="' . $title . '"';
         }
-    
-        $embed .= ' src="https://www.youtube-nocookie.com/embed/'.esc_attr($matches[1]).$relvideo.'" width="'.$width.'" height="'.$height.'">';
-	$notice = $this->options->youtube->iframe_notice;
-	if (!empty($notice)) {
-	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
-	}
-	$embed .= '</iframe>';
+
+        $embed .= ' src="https://www.youtube-nocookie.com/embed/' . esc_attr($ytid) . $relvideo . '" width="' . $width . '" height="' . $height . '">';
+        $notice = $this->options->youtube->iframe_notice;
+        if (!empty($notice)) {
+            $embed .= '<p>' . $notice . ' <a href="' . $url . '">' . $url . '</a></p>';
+        }
+        $embed .= '</iframe>';
         if ($this->options->youtube->display_source) {
             $embed .= '<div class="caption">';
-            $embed .= __('Source:', 'fau-oembed').' ';
-            if (! empty($data['author_name'])) {
-                $embed .= '<span class="author_name">'.$data['author_name'].'</span>, ';
+            $embed .= __('Source:', 'fau-oembed') . ' ';
+            if (!empty($data['author_name'])) {
+                $embed .= '<span class="author_name">' . $data['author_name'] . '</span>, ';
             }
-            $embed .= '<a href="'.$url.'">'.$url.'</a>';
+            $embed .= '<a href="' . $url . '">' . $url . '</a>';
             $embed .= '</div>';
         }
         $embed .= '</div>';
-    
+
         wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
     }
-        
+
     /*-----------------------------------------------------------------------------------*/
     /*  Slideshare
     /*-----------------------------------------------------------------------------------*/
@@ -454,98 +464,98 @@ class Embeds
         }
 
         $data = OEmbed::get_data($url);
-        if (! $data) {
+        if (!$data) {
             return $url;
         }
         $title = !empty($data['title']) ? $data['title'] : $this->options->embed_defaults->title;
         $width = isset($data['width']) && absint($data['width']) ? absint($data['width']) : $this->options->embed_defaults->width;
         $height = isset($data['height']) && absint($data['height']) ? absint($data['height']) : $this->options->embed_defaults->height;
-     
+
         $embed = '<div class="fau-oembed oembed" itemscope itemtype="http://schema.org/PresentationDigitalDocument">';
         $id = md5(uniqid('', true));
-        
-        if ($this->options->slideshare->display_title) {
-            $embed .= '<h3 id="'.$id.'" itemprop="name">'.$title.'</h3>';
-        } else {
-            $embed .= '<meta itemprop="name" content="'.$title.'">';
-        }
-        $embed .= '<meta itemprop="url" content="'.$url.'">';
-        if (! empty($data['thumbnail_url'])) {
-            $embed .= '<meta itemprop="thumbnail" content="'.$data['thumbnail_url'].'">';
-        }
-    
 
-        if (! empty($data['description'])) {
-            $embed .= '<meta itemprop="description" content="'.$data['description'].'">';
+        if ($this->options->slideshare->display_title) {
+            $embed .= '<h3 id="' . $id . '" itemprop="name">' . $title . '</h3>';
+        } else {
+            $embed .= '<meta itemprop="name" content="' . $title . '">';
+        }
+        $embed .= '<meta itemprop="url" content="' . $url . '">';
+        if (!empty($data['thumbnail_url'])) {
+            $embed .= '<meta itemprop="thumbnail" content="' . $data['thumbnail_url'] . '">';
+        }
+
+
+        if (!empty($data['description'])) {
+            $embed .= '<meta itemprop="description" content="' . $data['description'] . '">';
         } else {
             $desc = '';
-        
-            if (! empty($data['provider_name'])) {
-                $desc .= $data['provider_name'].' '.__('Slides', 'fau-oembed');
+
+            if (!empty($data['provider_name'])) {
+                $desc .= $data['provider_name'] . ' ' . __('Slides', 'fau-oembed');
             }
-            if (! empty($data['author_name'])) {
-                $desc .= ' '.__('by', 'fau-oembed').' '.$data['author_name'];
+            if (!empty($data['author_name'])) {
+                $desc .= ' ' . __('by', 'fau-oembed') . ' ' . $data['author_name'];
             }
-            $embed .= '<meta itemprop="description" content="'.$desc.'">';
+            $embed .= '<meta itemprop="description" content="' . $desc . '">';
         }
-    
-        if (! empty($data['author_name'])) {
-            $embed .= '<meta itemprop="author" content="'.$data['author_name'].'">';
+
+        if (!empty($data['author_name'])) {
+            $embed .= '<meta itemprop="author" content="' . $data['author_name'] . '">';
         }
-        if (! empty($data['provider_name'])) {
-            $embed .= '<meta itemprop="provider" content="'.$data['provider_name'].'">';
+        if (!empty($data['provider_name'])) {
+            $embed .= '<meta itemprop="provider" content="' . $data['provider_name'] . '">';
         }
-    
-    
+
+
         if ($this->options->slideshare->display_title) {
-            $embed .= '<iframe class="slideshare defaultwidth" aria-labelledby="'.$id.'"';
+            $embed .= '<iframe class="slideshare defaultwidth" aria-labelledby="' . $id . '"';
         } else {
-            $embed .= '<iframe class="slideshare defaultwidth" title="'.$title.'"';
+            $embed .= '<iframe class="slideshare defaultwidth" title="' . $title . '"';
         }
-    
-    
+
+
         $frameurl = '';
         $pattern        = '/src\=[\"|\\\']{1}([^\"\\\']*)[\"|\\\']{1}/i';
         $isframeurl = preg_match($pattern, $data['html'], $matches);
 
-        if ($isframeurl && ! empty($matches[1])) {
+        if ($isframeurl && !empty($matches[1])) {
             $frameurl = $matches[1];
         }
 
-        $embed .= ' src="'.$frameurl.'" width="'.$width.'" height="'.$height.'">';
-	
-	$notice = $this->options->slideshare->iframe_notice;
-	if (!empty($notice)) {
-	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
-	}
-	$embed .= '</iframe>';
-	
+        $embed .= ' src="' . $frameurl . '" width="' . $width . '" height="' . $height . '">';
+
+        $notice = $this->options->slideshare->iframe_notice;
+        if (!empty($notice)) {
+            $embed .= '<p>' . $notice . ' <a href="' . $url . '">' . $url . '</a></p>';
+        }
+        $embed .= '</iframe>';
+
         if ($this->options->slideshare->display_source) {
             $embed .= '<div class="caption">';
-       
-        
+
+
             if ($this->options->slideshare->display_title) {
-                if (! empty($data['author_name'])) {
-                    $embed .= '<span class="author_name">'.$data['author_name'].'</span>';
+                if (!empty($data['author_name'])) {
+                    $embed .= '<span class="author_name">' . $data['author_name'] . '</span>';
                 }
-                $embed .= ' '.__('on', 'fau-oembed').' <a href="'.$url.'">'.$data['provider_name'].'</a>';
+                $embed .= ' ' . __('on', 'fau-oembed') . ' <a href="' . $url . '">' . $data['provider_name'] . '</a>';
             } else {
-                $embed .= '<a href="'.$url.'">'.$title.'</a>';
-                if (! empty($data['author_name'])) {
-                    $embed .= __('by', 'fau-oembed').' <span class="author_name">'.$data['author_name'].'</span>, ';
+                $embed .= '<a href="' . $url . '">' . $title . '</a>';
+                if (!empty($data['author_name'])) {
+                    $embed .= __('by', 'fau-oembed') . ' <span class="author_name">' . $data['author_name'] . '</span>, ';
                 }
             }
-        
+
             $embed .= '</div>';
         }
         $embed .= '</div>';
-    
-    
-    
+
+
+
         wp_enqueue_style('fau-oembed-style');
         return apply_filters('embed_ytnocookie', $embed, $matches, $attr, $url, $rawattr);
     }
-    
+
     /*-----------------------------------------------------------------------------------*/
     /*  BR Mediathek
     /*-----------------------------------------------------------------------------------*/
@@ -566,28 +576,28 @@ class Embeds
                 return '';
             }
         }
-        
+
         $id = md5(uniqid('', true));
-        
+
         $relvideo = '';
         if ($this->options->brmediathek->norel) {
             $relvideo = '&rel=0';
         }
-        
+
         $width = isset($attr['width']) && absint($attr['width']) ? absint($attr['width']) : $this->options->embed_defaults->width;
         $height = isset($attr['height']) && absint($attr['height']) ? absint($attr['height']) : $this->options->embed_defaults->height;
-       
+
         $embed = '<div class="fau-oembed oembed">';
         $embed .= '<div class="elastic-video">';
         $embed .= '<iframe class="brmediathek defaultwidth" frameborder="0" allow="autoplay; fullscreen" allowfullscreen aria-labelledby="' . $id . '"';
-        $embed .= ' src="https://www.br.de/mediathek/embed/' . esc_attr($matches[1]) . '?autoplay=false&muted=false' . $relvideo . '" width="' . $width.'" height="' . $height . '">';
-	
-	$notice = $this->options->brmediathek->iframe_notice;
-	if (!empty($notice)) {
-	     $embed .= '<p>'.$notice.' <a href="'.$url.'">'.$url.'</a></p>';
-	}
-	$embed .= '</iframe>';
-	
+        $embed .= ' src="https://www.br.de/mediathek/embed/' . esc_attr($matches[1]) . '?autoplay=false&muted=false' . $relvideo . '" width="' . $width . '" height="' . $height . '">';
+
+        $notice = $this->options->brmediathek->iframe_notice;
+        if (!empty($notice)) {
+            $embed .= '<p>' . $notice . ' <a href="' . $url . '">' . $url . '</a></p>';
+        }
+        $embed .= '</iframe>';
+
         $embed .= '</div>';
         $embed .= '</div>';
 
