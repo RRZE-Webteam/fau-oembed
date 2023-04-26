@@ -31,6 +31,19 @@ class Embeds
         add_action('init', [$this, 'fau_karte']);
         add_action('init', [$this, 'fau_videoportal']);
 
+        // Mein Studium Provider
+        add_filter('oembed_providers', static function (array $providers): array {
+            $providers['#https://meinstudium\.fau\.de/.*#i'] = [
+                'https://meinstudium.fau.de/wp-json/oembed/1.0/embed',
+                true
+            ];
+            $providers['#https://meinstudium\.cms\.rrze\.net/.*#i'] = [
+                'https://meinstudium.cms.rrze.net/wp-json/oembed/1.0/embed',
+                true
+            ];
+            return $providers;
+        });
+
         if (!Options::handled_by_Embed_Privacy('youtube')) {
             add_action('init', [$this, 'youtube_nocookie']);
         }
