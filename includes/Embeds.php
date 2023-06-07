@@ -41,6 +41,10 @@ class Embeds
                 'https://meinstudium.cms.rrze.net/wp-json/oembed/1.0/embed',
                 true
             ];
+            $providers['#https://meinstudium\-en\.cms\.rrze\.net/.*#i'] = [
+                'https://meinstudium-en.cms.rrze.net/wp-json/oembed/1.0/embed',
+                true
+            ];            
             return $providers;
         });
 
