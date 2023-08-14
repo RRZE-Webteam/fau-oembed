@@ -1,6 +1,7 @@
 <?php
 
  namespace FAU\OEmbed\API;
+ use FAU\OEmbed\Helper;
 
 defined('ABSPATH') || exit;
 
@@ -9,16 +10,21 @@ defined('ABSPATH') || exit;
  *
  * This class is immutable, i.e. once created it can't be changed. Methods that modify it
  * will always return a new instance.
- */
- abstract class OEmbed {
+*/
+abstract class OEmbed {
 
- 
-     
-     
     /*
      * Gist by https://gist.github.com/RadGH, 
      *      https://gist.github.com/RadGH/64d74e429583c5ab390f1395971b2495 
      */
+	/**
+	 * Get oEmbed data for a given URL and optional width and height.
+	 *
+	 * @param [type] $url The URL to get oEmbed data for.
+	 * @param [type] $width The width of the embed.
+	 * @param [type] $height The height of the embed.
+	 * @return array|false The oEmbed data or false on failure.
+	 */
     public static function get_data( $url, $width = null, $height = null ) {
 	if ( function_exists('_wp_oembed_get_object') ) {
 		require_once( ABSPATH . WPINC . '/class-wp-oembed.php' );
@@ -101,6 +107,12 @@ defined('ABSPATH') || exit;
     /* Set Defaults
     /*-----------------------------------------------------------------------------------*/
     
+	/**
+	 * Sets the default embed size using the values from the options property of the class.
+	 *
+	 * @param array $embed_size The default embed size.
+	 * @return array The default embed size.
+	 */
     public function set_embed_defaults($embed_size){
 	$embed_size['width'] = $this->options->embed_defaults->width;
 	$embed_size['height'] = $this->options->embed_defaults->height;

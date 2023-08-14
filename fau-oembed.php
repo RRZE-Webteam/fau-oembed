@@ -5,7 +5,7 @@ Plugin Name:         FAU oEmbed
 Plugin URI:          https://github.com/RRZE-Webteam/fau-oembed
 GitHub Plugin URI:   https://github.com/RRZE-Webteam/fau-oembed
 Description:         Automatic integration of FAU maps, videos from FAU.tv, YouTube videos without cookies, and other FAU oEmbed sources.
-Version:             3.4.2
+Version:             3.4.3
 Author:              RRZE-Webteam
 Author URI:          https://blogs.fau.de/webworking/
 License:             GNU General Public License v2

@@ -76,7 +76,6 @@ class Options
         return $options;
     }
 
-
     /**
      * Returns the options.
      * @param  boolean $network [description]
@@ -115,7 +114,6 @@ class Options
         }
         return $options;
     }    
-    
     
     public static function isPlugin_Embed_Privacy() : bool {
 	if ( ! class_exists( 'epiphyt\Embed_Privacy\Embed_Privacy' ) ) {

@@ -20,17 +20,13 @@ class Main
         add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
         // add_filter('embed_oembed_html', [$this, 'fau_oembed_wrap_oembed_div'], 10, 3);
         new Settings();
-        // Settings of Plugin
         new Embeds();
-        // New Embdes and Changes to StandardEmbdes
         new Shortcode();
-        // Shortcodes
-        new SemiEmbeds();
-        // Embdes, that feel and work like embeds for the author, but dont use oEmbed-API
+        new SemiEmbeds(); // SemiEmbeds, that feel and work like embeds for the author, but dont use oEmbed-API
     }
 
     /*-----------------------------------------------------------------------------------*/
-    /* Enqueue der globale Skripte.
+    /* Enqueue global scripts
     /*-----------------------------------------------------------------------------------*/
     public function register_scripts()
     {
@@ -39,11 +35,11 @@ class Main
             plugins_url('assets/css/fau-oembed.css', plugin()->getBasename()),
             [],
             plugin()->getVersion()
-        );        
+        );
     }
 
     /*-----------------------------------------------------------------------------------*/
-    /* Surround embeddings with div class
+    /* Surround embeds with div class
     /*-----------------------------------------------------------------------------------*/
     public function fau_oembed_wrap_oembed_div($html, $url, $attr)
     {
@@ -53,7 +49,7 @@ class Main
     /*
      * Only for debugging, remove on stable
      */
-    public  function var_dump_ret($mixed = null)
+    public function var_dump_ret($mixed = null)
     {
         ob_start();
         var_dump($mixed);
