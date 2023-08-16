@@ -7,18 +7,18 @@ use FAU\OEmbed\Services\FauMac;
 
 defined('ABSPATH') || exit;
 
+/**
+ * This class manages and sets up custom embed providers and handlers.
+ */
 class Embeds
 {
     protected $options;
-
     protected $providers;
-
     protected $handlers;
 
     public function __construct()
     {
         $this->options = Options::getOptions();
-
         $this->providers = $this->providers();
         $this->handlers = $this->handlers();
 
@@ -26,12 +26,11 @@ class Embeds
         add_action('init', [$this, 'addProviders']);
 
         // Register Embed Handlers.
-        // Sollte nur für Handlers verwendet werden, die oEmbed nicht unterstützen 
-        // oder wo wir eine individuelle Anpassung machen.
+        // Only use this for handlers that don't support oEmbed or where we need individual customisation.
         add_action('init', [$this, 'fau_karte']);
         add_action('init', [$this, 'fau_videoportal']);
 
-        // Mein Studium Provider
+        // MeinStudium Provider
         add_filter('oembed_providers', static function (array $providers): array {
             $providers['#https://meinstudium\.fau\.de/.*#i'] = [
                 'https://meinstudium.fau.de/wp-json/oembed/1.0/embed',
@@ -60,6 +59,12 @@ class Embeds
         FauMac::getInstance();
     }
 
+    /**
+     * Defines a list of custom oEmbed providers. 
+     * Each provider is represented by its pattern and its oEmbed endpoint URL.
+     *
+     * @return array List of custom oEmbed providers.
+     */
     protected function providers()
     {
         $providers = [
@@ -72,13 +77,17 @@ class Embeds
             'https://faumac.rrze.fau.de/oembed/*' => ['https://faumac.rrze.fau.de/oembed/', false],
             // oEmbed Schnittstelle für die EInbindung im Rahmen der 100 Jahre WISO
             // Ansprechpartner: Jalowski, Max <max.jalowski@fau.de>
-            'https://100jahre.wi1projects.de' => ['https://100jahre.wi1projects.de/oembed', false]
+            'https://100jahre.wi1projects.de' => ['https://100jahre.wi1projects.de/oembed', false],
         ];
         return apply_filters('fau_oembed_providers', $providers);
     }
 
-
-
+    /**
+     * Defines various embed handlers for multiple platforms. 
+     * For each handler, there is a regex to match URL and callback method to handle embedding.
+     *
+     * @return void
+     */
     protected function handlers()
     {
         $handlers = [
@@ -141,7 +150,7 @@ class Embeds
                 'allowed_domains' => ['*.slideshare.net'],
                 'slideshare' => [
                     'regex' => '#https?://(.+?\.)?slideshare\.net/.*#i',
-                    'callback' => [$this, 'wp_embed_handler_slidershare']
+                    'callback' => [$this, 'wp_embed_handler_slideshare']
                 ]
             ],
             'brmediathek' => [
@@ -157,6 +166,13 @@ class Embeds
         return apply_filters('fau_oembed_handlers', $handlers);
     }
 
+
+    /**
+     * Loops through each oEmbed provider pattern and registers it with WordPress wp_oembed_add_provider function.
+     * Each provider is added with its pattern, endpoint and flag for a regex.
+     * 
+     * @return void
+     */
     public function addProviders()
     {
         foreach ($this->providers as $k => $v) {
@@ -165,7 +181,9 @@ class Embeds
     }
 
     /**
-     * [registerHandler description]
+     * Given a handler key, it checks if the handler exists in the $handlers property.
+     * If it exists, it loops through its regex patterns and callback methods, skipping allowed_domains
+     * and registers each handler using wordpress wp_embed_register_handler function.
      * @param  string $handler [description]
      */
     protected function registerHandler(string $handler)
@@ -465,16 +483,22 @@ class Embeds
     public function slideshare()
     {
         if ($this->options->slideshare->active == true) {
+            //wp_oembed_remove_provider('#https?://(.+?\.)?slideshare\.net/.*#i');
+            $this->registerHandler('slideshare');
+        } else {
             wp_oembed_remove_provider('#https?://(.+?\.)?slideshare\.net/.*#i');
             $this->registerHandler('slideshare');
+            return;
         }
     }
 
-    public function wp_embed_handler_slidershare($matches, $attr, $url, $rawattr)
+    public function wp_embed_handler_slideshare($matches, $attr, $url, $rawattr)
     {
+        // If it is a RSS feed, return a hyperlink instead of the embed
         if (is_feed()) {
             if (filter_var($url, FILTER_VALIDATE_URL)) {
                 return sprintf('<a href="%1$s">%1$s</a>', $url);
+                
             } else {
                 return '';
             }
